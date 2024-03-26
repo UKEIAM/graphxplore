@@ -189,11 +189,10 @@ class GraphDatabaseUtils:
     def get_neo4j_address(host: str = 'localhost', port: int = 7687, protocol : str = 'bolt') -> str:
         """Generates the address of a Neo4J DBMS with the given host, port and protocol.
 
-        :param host:
-        :param host:The host name where the Neo4J DBMS is running
+        :param host: The host name where the Neo4J DBMS is running
         :param port: The port for the Neo4J Bolt protocol
         :param protocol: The protocol of the connection
-        :return:
+        :return: Returns the address as string
         """
         if USE_PYODIDE:
             used_protocol = 'http'
@@ -342,7 +341,8 @@ class GraphDatabaseUtils:
     def check_graph_type_of_db(db_name: str, address: str = get_neo4j_address(),
                                auth: Tuple[str, str] = ("neo4j", "")) -> GraphType:
         """Retrieves the :class:`GraphType` of a given Neo4J database by checking all labels found in the database and
-        checking for `BaseNodeType.Key`, :class:`DistinctionLabel`, :class:`FrequencyLabel`. Raises an exception if the
+        checking for ``BaseNodeType.Key``, :class:`~graphxplore.Basis.AttributeAssociationGraph.DistinctionLabel`,
+        :class:`~graphxplore.Basis.AttributeAssociationGraph.FrequencyLabel`. Raises an exception if the
         connection could not be established, the database does not exist in the DBMS, or the type of database is not
         recognized
 
@@ -396,7 +396,7 @@ class GraphDatabaseUtils:
         :param db_name: The name of the database
         :param address: The address of the Neo4J DBMS
         :param auth: username and password to access the Neo4j DBMS
-        :return:
+        :return: Returns the number of edges
         """
         if db_name not in GraphDatabaseUtils.get_existing_databases(address, auth):
             raise AttributeError('Database "' + db_name + '" not found in Neo4J DBMS')

@@ -26,7 +26,7 @@ class BaseLabels:
     """The labels assigned to a :class:`BaseNode`.
 
     :param membership_labels: One or more labels describing the membership of the node into categories. The origin table
-    should always be one label
+        should always be one label
     :param node_type: The type of node
     """
     def __init__(self, membership_labels : Tuple[str, ...], node_type : BaseNodeType):

@@ -37,6 +37,12 @@ class AttributeAssociationGraphGenerator:
     :param group_selection: For each group of primary keys, the name and selection condition as a
         :class:`GroupSelector` object or as a Cypher query. The node IDs of primary keys must be returned with the
         Cypher variable "x_0" in the form "return id(<node variable>) as x_0"
+    :param positive_group: The name of the positive group. Must be contained in ``group_selection`` if defined.
+        Attributes which appear more frequently in this group compare to the ``negative_group`` will be label as
+        "related" or "highly related" and colored in orange or red in the visualization. Defaults to None
+    :param negative_group: The name of the negative group. Must be contained in ``group_selection`` if defined.
+        Attributes which appear more frequently in this group compare to the ``positive_group`` will be label as
+        "inverse" or "highly inverse" and colored in turquoise or blue in the visualization. Defaults to None
     :param pre_filter: The filter applied to attribute nodes when querying the database, defaults to None
     :param post_filter: The post filter applied to the generated knowledge graph, defaults to None
     :param frequency_thresholds: Thresholds of prevalence for "frequent" and "highly frequent"
@@ -50,7 +56,7 @@ class AttributeAssociationGraphGenerator:
     :param increase_ratio_thresholds: Thresholds of conditional increase ratio for
         "medium influence" and "high influence" labels, defaults to 1.5 and 2.0
     :param address: The address of the Neo4J DBMS. Can be generated with
-            :class:`~graphxplore.Basis.GraphDatabaseUtils.get_neo4j_address()
+        :class:`~graphxplore.Basis.GraphDatabaseUtils.get_neo4j_address()
     :param auth: username and password to access the Neo4j DBMS
     """
 
