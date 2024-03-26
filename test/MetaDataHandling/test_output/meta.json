@@ -1,0 +1,287 @@
+{
+      "primary_table": {
+            "label": "primary_table",
+            "primary_key": "PRIMARY",
+            "foreign_keys": {},
+            "variables": {
+                  "ROW_ID": {
+                        "name": "ROW_ID",
+                        "table": "primary_table",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "Integer",
+                        "description": "irrelevant index",
+                        "data_type_distribution": {
+                              "String": 0.0,
+                              "Integer": 1.0,
+                              "Decimal": 0.0
+                        },
+                        "default_value": null,
+                        "value_distribution": {
+                              "category_counts": {
+                                    "0": 1,
+                                    "1": 1,
+                                    "2": 1,
+                                    "3": 1,
+                                    "4": 1
+                              },
+                              "other_count": 0,
+                              "missing_count": 0,
+                              "artifact_count": 0
+                        },
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "PRIMARY": {
+                        "name": "PRIMARY",
+                        "table": "primary_table",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": "primary key",
+                        "data_type_distribution": {
+                              "String": 0.0,
+                              "Integer": 1.0,
+                              "Decimal": 0.0
+                        },
+                        "default_value": null,
+                        "value_distribution": {
+                              "category_counts": {
+                                    "1": 1,
+                                    "2": 1,
+                                    "3": 1,
+                                    "4": 1,
+                                    "5": 1
+                              },
+                              "other_count": 0,
+                              "missing_count": 0,
+                              "artifact_count": 0
+                        },
+                        "binning": {
+                              "should_bin": false,
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null
+                        },
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "STRING_ATTR": {
+                        "name": "STRING_ATTR",
+                        "table": "primary_table",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "String",
+                        "description": "contains text",
+                        "data_type_distribution": {
+                              "String": 1.0,
+                              "Integer": 0.0,
+                              "Decimal": 0.0
+                        },
+                        "default_value": null,
+                        "value_distribution": {
+                              "category_counts": {
+                                    "Text": 3,
+                                    "AnotherText\nMoreText": 1,
+                                    "TextWithoutQuotes": 1
+                              },
+                              "other_count": 0,
+                              "missing_count": 0,
+                              "artifact_count": 0
+                        },
+                        "binning": {
+                              "should_bin": false,
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null
+                        },
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "FLOAT_ATTR": {
+                        "name": "FLOAT_ATTR",
+                        "table": "primary_table",
+                        "labels": [],
+                        "variable_type": "Metric",
+                        "data_type": "Decimal",
+                        "description": null,
+                        "data_type_distribution": {
+                              "String": 0.0,
+                              "Integer": 0.0,
+                              "Decimal": 1.0
+                        },
+                        "default_value": null,
+                        "value_distribution": {
+                              "median": 1.0,
+                              "q1": 0.5,
+                              "q3": 2.0,
+                              "lower_fence": 0.5,
+                              "upper_fence": 4.25,
+                              "outliers": [],
+                              "missing_count": 0,
+                              "artifact_count": 1
+                        },
+                        "binning": {
+                              "should_bin": true,
+                              "exclude_from_binning": [
+                                    -1.0,
+                                    "na"
+                              ],
+                              "ref_high": 0.5,
+                              "ref_low": 0.0
+                        },
+                        "artifacts": [
+                              "3000.6"
+                        ],
+                        "reviewed": null
+                  },
+                  "MIXED_ATTR": {
+                        "name": "MIXED_ATTR",
+                        "table": "primary_table",
+                        "labels": [],
+                        "variable_type": "Metric",
+                        "data_type": "Decimal",
+                        "description": null,
+                        "data_type_distribution": {
+                              "String": 0.4,
+                              "Integer": 0.2,
+                              "Decimal": 0.4
+                        },
+                        "default_value": null,
+                        "value_distribution": {
+                              "median": 0.2,
+                              "q1": 0.2,
+                              "q3": 2.0,
+                              "lower_fence": 0.2,
+                              "upper_fence": 2.0,
+                              "outliers": [],
+                              "missing_count": 0,
+                              "artifact_count": 2
+                        },
+                        "binning": {
+                              "should_bin": false,
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null
+                        },
+                        "artifacts": [
+                              "Text"
+                        ],
+                        "reviewed": null
+                  }
+            }
+      },
+      "secondary_table": {
+            "label": "secondary_table",
+            "primary_key": "OWN_PRIMARY",
+            "foreign_keys": {
+                  "PRIMARY": "primary_table"
+            },
+            "variables": {
+                  "OWN_PRIMARY": {
+                        "name": "OWN_PRIMARY",
+                        "table": "secondary_table",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": "primary key",
+                        "data_type_distribution": {
+                              "String": 0.0,
+                              "Integer": 1.0,
+                              "Decimal": 0.0
+                        },
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "PRIMARY": {
+                        "name": "PRIMARY",
+                        "table": "secondary_table",
+                        "labels": [],
+                        "variable_type": "ForeignKey",
+                        "data_type": "Integer",
+                        "description": "is foreign key",
+                        "data_type_distribution": {
+                              "String": 0.0,
+                              "Integer": 1.0,
+                              "Decimal": 0.0
+                        },
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": {
+                              "should_bin": false,
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null
+                        },
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "ATTR_WITH_EMPTY": {
+                        "name": "ATTR_WITH_EMPTY",
+                        "table": "secondary_table",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "String",
+                        "description": "weird variable",
+                        "data_type_distribution": {
+                              "String": 1.0,
+                              "Integer": 0.0,
+                              "Decimal": 0.0
+                        },
+                        "default_value": "default value",
+                        "value_distribution": {
+                              "category_counts": {
+                                    "NotEmpty": 2
+                              },
+                              "other_count": 0,
+                              "missing_count": 2,
+                              "artifact_count": 0
+                        },
+                        "binning": {
+                              "should_bin": false,
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null
+                        },
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "FLOAT_INT_ATTR": {
+                        "name": "FLOAT_INT_ATTR",
+                        "table": "secondary_table",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "Decimal",
+                        "description": null,
+                        "data_type_distribution": {
+                              "String": 0.0,
+                              "Integer": 0.75,
+                              "Decimal": 0.25
+                        },
+                        "default_value": null,
+                        "value_distribution": {
+                              "category_counts": {
+                                    "2": 2,
+                                    "1": 1,
+                                    "1.01": 1
+                              },
+                              "other_count": 0,
+                              "missing_count": 0,
+                              "artifact_count": 0
+                        },
+                        "binning": {
+                              "should_bin": false,
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null
+                        },
+                        "artifacts": null,
+                        "reviewed": null
+                  }
+            }
+      }
+}

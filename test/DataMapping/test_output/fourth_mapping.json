@@ -1,0 +1,64 @@
+{
+      "root": {
+            "table_mapping": {
+                  "type": "OneToOne",
+                  "source_tables": [
+                        "first_child_table"
+                  ],
+                  "to_inherit": null,
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "NON_AGGREGATED_ATTR_CHILD_3": {
+                        "target_table": "root",
+                        "target_variable": "NON_AGGREGATED_ATTR_CHILD_3",
+                        "cases": [
+                              {
+                                    "if": "(AGGREGATE LIST VARIABLE ATTR OF TYPE String IN TABLE second_root_table CONTAINS \"NaN\")",
+                                    "then": "COPY VARIABLE ATTR IN TABLE third_child_table IF TYPE IS String"
+                              }
+                        ]
+                  },
+                  "CONCATENATED_ATTR1_ROOT_1": {
+                        "target_table": "root",
+                        "target_variable": "CONCATENATED_ATTR1_ROOT_1",
+                        "cases": [
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "AGGREGATE CONCATENATE VARIABLE ATTR1 OF TYPE String IN TABLE first_root_table"
+                              }
+                        ]
+                  }
+            }
+      },
+      "child": {
+            "table_mapping": {
+                  "type": "Inherited",
+                  "source_tables": [],
+                  "to_inherit": "root",
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "SUMMED_ATTR_ROOT_2": {
+                        "target_table": "child",
+                        "target_variable": "SUMMED_ATTR_ROOT_2",
+                        "cases": [
+                              {
+                                    "if": "(VARIABLE ATTR OF TYPE Decimal IN TABLE first_child_table == 0.7)",
+                                    "then": "AGGREGATE SUM VARIABLE ATTR OF TYPE Decimal IN TABLE second_root_table"
+                              }
+                        ]
+                  },
+                  "AVG_ATTR2_ROOT_1": {
+                        "target_table": "child",
+                        "target_variable": "AVG_ATTR2_ROOT_1",
+                        "cases": [
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "AGGREGATE MEAN VARIABLE ATTR2 OF TYPE Decimal IN TABLE first_root_table"
+                              }
+                        ]
+                  }
+            }
+      }
+}

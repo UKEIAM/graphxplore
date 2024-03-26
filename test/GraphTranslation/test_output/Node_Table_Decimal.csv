@@ -1,0 +1,8 @@
+:ID,:LABEL,name,value:double,description
+4,primary_table;Attribute,FLOAT_ATTR,0.5,
+8,primary_table;Attribute,MIXED_ATTR,0.2,
+12,primary_table;Attribute,FLOAT_ATTR,1.0,
+13,primary_table;Attribute,MIXED_ATTR,2.0,
+18,secondary_table;Attribute,FLOAT_INT_ATTR,1.0,
+21,secondary_table;Attribute,FLOAT_INT_ATTR,1.01,
+23,secondary_table;Attribute,FLOAT_INT_ATTR,2.0,

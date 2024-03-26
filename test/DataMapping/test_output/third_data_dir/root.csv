@@ -1,0 +1,4 @@
+NEW_PK,ORIGIN_PK_1,ORIGIN_PK_2,PK_CHILD,ATTR1,ATTR2
+0,0,0,0,secondCase,-1.5
+1,1,1,1,firstCase,-999.0
+2,2,,1,firstCase,-999.0
