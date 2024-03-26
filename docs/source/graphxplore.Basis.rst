@@ -3,12 +3,13 @@
 graphxplore.Basis package
 =========================
 
-This subpackage contains all graph data structures in the subpackages :ref:`basegraph`, :ref:`knowledgegraph` and
-:ref:`knowledgesummarygraph`. Additionally, file format detection and statistical score calculation can be done with
+This subpackage contains all graph data structures in the subpackages :ref:`basegraph` and :ref:`aag`. Additionally,
+several utility functionalities like file format detection and statistical score calculation can be done with
 the :class:`~graphxplore.Basis.BaseUtils` class. :class:`~graphxplore.Basis.GraphCSVReader`,
 :class:`~graphxplore.Basis.GraphCSVWriter` and :class:`~graphxplore.Basis.GraphDatabaseWriter` classes can be used for
-IO handling of graph structures. Building and writing a :class:`~graphxplore.Basis.BaseGraph.BaseGraph` (other graph
-types follow the same rationale) to a Neo4J database might look like
+IO handling of graph structures. Building and writing a :class:`~graphxplore.Basis.BaseGraph.BaseGraph`
+(:class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationGraph` follows the same rationale) to a Neo4J
+database might look like
 
 ::
 
@@ -35,8 +36,8 @@ types follow the same rationale) to a Neo4J database might look like
     # in row in table 'FirstTable' of primary key value 42
     >>> base_graph.edges.append(BaseEdge(source=2, target=0, edge_type=BaseEdgeType.CONNECTED_TO))
     # write graph to Neo4J database 'mygraph'
-    >>> GraphDatabaseWriter.write_graph(db_name='mygraph', graph=base_graph, overwrite=False, host='localhost',
-    >>>                                 bolt_port=7687, auth=('my_user', 'my_password'))
+    >>> GraphDatabaseWriter.write_graph(db_name='mygraph', graph=base_graph, overwrite=False,
+                                        address='bolt://localhost:7687', auth=('my_user', 'my_password'))
 
 Submodules
 -----------
@@ -45,8 +46,7 @@ Submodules
    :maxdepth: 1
 
    graphxplore.Basis.BaseGraph
-   graphxplore.Basis.KnowledgeGraph
-   graphxplore.Basis.KnowledgeSummaryGraph
+   graphxplore.Basis.AttributeAssociationGraph
 
 Module contents
 ---------------
