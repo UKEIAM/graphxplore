@@ -1,0 +1,5 @@
+numpy
+chardet
+plotly
+pandas
+st-pages
