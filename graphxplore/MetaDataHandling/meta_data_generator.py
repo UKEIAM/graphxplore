@@ -6,18 +6,19 @@ from .variable_info import BinningInfo, VariableType, DataType, ArtifactMode
 from .meta_data import MetaData
 
 class MetaDataGenerator:
-    """This class extracts metadata information from CSV files. It detects primary keys and
-     foreign key relations between tables. Additionally, :class:`VariableInfo` objects are inferred for all columns of
-     all CSV files.
+    """This class extracts metadata information from CSV files. It detects primary keys and foreign key relations
+    between tables. Additionally, :class:`VariableInfo` objects are inferred for all columns of all CSV files. The
+    result is a :class:`MetaData` object.
 
-    :param csv_data: The input data of the CSV files either as directory path containing the CSV files or as
-        dictionary of table name and table data as dictionary per row
+    :param csv_data: The input data as CSV files either as directory path containing the CSV files or as
+        dictionary of table name and table data as list of dictionaries per row
     :param artifact_mode: Determines if artifacts should be detected and at what level. For further information check
         :class:`ArtifactMode`
     :param missing_vals: These characters indicate missing values, defaults to empty string, None and variations of
         "NaN" and "Na"
-    :param nof_read_lines: Number of lines read from each CSV file to gather metadata, defaults to 1 million
-    :param str_len_free_text: Strings of at least this length are considered free text, defaults to 300
+    :param nof_read_lines: Maximum number of lines read from each CSV file to gather metadata, defaults to 1 million
+    :param str_len_free_text: Strings with at least this number of characters are considered free text and the
+        containing variable is unfavored as primary key. Defaults to 300.
     :param binning_threshold: Metric variables with more distinct values are marked for binning, defaults to 20
     :param categorical_threshold: Variables with at most this number of distinct values are considered categorical,
         defaults to 20
