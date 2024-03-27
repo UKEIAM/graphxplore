@@ -12,11 +12,11 @@ like this:
 
 #. Extract, inspect and potentially adjust metadata information with :ref:`metadatahandling`
 
-#. Potentially clean and transform data with :ref:`datamapping`
+#. Clean artifacts and transform data with :ref:`datamapping`
 
 #. Convert the relational data into a graph structure (and load into a Neo4J database) with :ref:`graphtranslation`
 
-#. Generate knowledge graphs for easy exploratory data analysis and/or visual presentation with :ref:`graphdatascience`
+#. Generate dashboards and graph-based visualizations for easy exploratory data analysis with :ref:`graphdatascience`
 
 Subpackages
 -----------
