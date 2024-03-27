@@ -37,7 +37,7 @@ database might look like
     >>> base_graph.edges.append(BaseEdge(source=2, target=0, edge_type=BaseEdgeType.CONNECTED_TO))
     # write graph to Neo4J database 'mygraph'
     >>> GraphDatabaseWriter.write_graph(db_name='mygraph', graph=base_graph, overwrite=False,
-                                        address='bolt://localhost:7687', auth=('my_user', 'my_password'))
+    >>>                                 address='bolt://localhost:7687', auth=('my_user', 'my_password'))
 
 Submodules
 -----------
