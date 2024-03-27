@@ -30,10 +30,6 @@ statements. The code to generate and store a :class:`~graphxplore.Basis.BaseGrap
     >>> translator.transform_to_graph(csv_data='/relational_csv_dir', output='mygraphdb',
     >>>                               output_type=GraphOutputType.Database, address='bolt://localhost:7687',
     >>>                               auth=('my_user', 'my_password'))
-    >>> reader = GraphCSVReader(graph_dir='graph_dir', graph_type=GraphType.Base)
-    >>> reloaded_graph = reader.read_graph()
-    >>> GraphDatabaseWriter.write_graph(db_name='mygraph', graph=reloaded_graph, overwrite=False, host='localhost',
-    >>>                                 bolt_port=7687, auth=('my_user', 'my_password'))
 
 Module contents
 ---------------
