@@ -22,16 +22,27 @@ from .post_filter import AttributeAssociationGraphPostFilter
 
 class AttributeAssociationGraphGenerator:
     """This class extracts statistical measurements for all attributes in a dataset regarding their association with one
-    or multiple selected group of primary keys (e.g. patient IDs). Absolute frequencies and relative (with and without
-    missing values) shares of attributes, and conditional shares between attribute are calculated. Frequency
-    differences/quotients between groups and between conditional and unconditional shares are measured, node labels
-    and edge types are derived accordingly. As a result, attributes and their relations can be visually seperated by
-    these distinctions to guide the user during the visual exploration in the Neo4J frontend.
-    The origin dataset must be stored as a :class:`BaseGraph` in a Neo4J database. The considered attributes can be
+    or multiple selected group of primary keys (e.g. patient IDs). Absolute counts. missing value rates and prevalence
+    of attributes within groups are calculated and compare by difference and ratio. These parameters are stored in
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationNode` objects. Additionally, conditional
+    dependencies between attributes are measured by co-occurrence, conditional prevalence in groups and compared to
+    unconditional prevalence. The results are stored in
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationEdge` objects. For
+    more detailed descriptions of the calculated metrics refer to
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationNode` and
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationEdge`.
+
+    Nodes are labeled based on the prevalence of their attribute in the defined groups and the distinction between
+    prevalence. These labels are encoded in the size and color of their node depicting in the Neo4J visualization.
+    Additionally, edges are assigned a type based on the distinction between conditional and unconditional prevalence.
+    This edge type influences the thickness of the drawn arrow representing the edge.
+
+    The origin dataset must be stored as a :class:`~graphxplore.Basis.BaseGraph.BaseGraph` in a Neo4J database. The considered attributes can be
     pre-filtered by name and value using datatypes, string and numerical comparisons, blacklist and whitelist conditions.
     Additionally, the generated graph can be post-filtered by assessing the calculated statistical measurements. For
-    more detailed descriptions of the calculated metrics refer to :class:`AttributeAssociationNode` and
-    :class:`AttributeAssociationEdge`
+    more detailed descriptions of the calculated metrics refer to
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationNode` and
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationEdge`
 
     :param db_name: The name of the database
     :param group_selection: For each group of primary keys, the name and selection condition as a
@@ -52,11 +63,11 @@ class AttributeAssociationGraphGenerator:
     :param prevalence_ratio_thresholds: Thresholds for prevalence ratio for "related"/"inverse"
         and "highly related"/"highly inverse" labels, defaults to 1.5 and 2.0
     :param cond_increase_thresholds: Thresholds of conditional increase for
-        "medium influence" and "high influence" labels, defaults to 0.1 and 0.2
+        "medium relation" and "high relation" labels, defaults to 0.1 and 0.2
     :param increase_ratio_thresholds: Thresholds of conditional increase ratio for
-        "medium influence" and "high influence" labels, defaults to 1.5 and 2.0
+        "medium relation" and "high relation" labels, defaults to 1.5 and 2.0
     :param address: The address of the Neo4J DBMS. Can be generated with
-        :class:`~graphxplore.Basis.GraphDatabaseUtils.get_neo4j_address()
+        :func:`~graphxplore.Basis.GraphDatabaseUtils.get_neo4j_address()`
     :param auth: username and password to access the Neo4j DBMS
     """
 

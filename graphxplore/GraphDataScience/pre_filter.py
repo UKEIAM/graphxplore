@@ -45,7 +45,8 @@ class AttributeFilter:
 
 
 class AttributeAssociationGraphPreFilter:
-    """This class captures all filters that are applied to the attribute nodes of a :class:`BaseGraph` as Neo4J
+    """This class captures all filters that are applied to the attribute nodes of a
+    :class:`~graphxplore.Basis.BaseGraph.BaseGraph` as Neo4J
     database by the :class:`AttributeAssociationGraphGenerator`. Attribute nodes are selected for the statistical
     analysis based on these filters. Each node's `name` and `value` parameter must match at least one whitelist filter
     (if specified) and cannot match a blacklist filter (if specified). With the different table filters the BFS search
