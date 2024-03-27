@@ -757,7 +757,7 @@ class RelationalDataIODevice:
         the data dict if ``write`` is ``False``
 
         :param data_location: A directory path, or a dictionary of table name (without .csv extension) and list of
-        table row dicts
+            table row dicts
         :param write: bool for write or read access
         """
         if isinstance(data_location, str):
@@ -772,7 +772,7 @@ class RelationalDataIODevice:
         """Retrieves all table names (without .csv extension) from a directory path, or all keys from a data dictionary
 
         :param data_source: A directory path, or a dictionary of table name (without .csv extension) and list of
-        table row dicts
+            table row dicts
         :return: Returns the found table names as a list of strings
         """
         RelationalDataIODevice.check_data_location(data_source)
