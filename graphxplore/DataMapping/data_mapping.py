@@ -16,33 +16,37 @@ class TableMapping:
     """
     Each target table x must have some relationship to one or multiple source tables.
     Using this relationship, single units of source data are formed. Variable mappings are applied to these
-    units to form a single output row of x. Variables of the related source tables and their foreign
+    units to form a single output row of *x*. Variables of the related source tables and their foreign
     tables (and their foreign tables, and so on...) will have a single value (might be a missing value) in
     this unit of source data. These variables are called singular variables. Variables of inverted
-    foreign tables (a is an inverted foreign table of b, if b is a foreign table of a), might have
+    foreign tables (*a* is an inverted foreign table of *b*, if *b* is a foreign table of *a*), might have
     multiple values in a unit of source data (e.g. timeseries, or multiple blood measurements for a single
     patient). They are called aggregate variables. For a table mapping you have the following options:
-        - x has a one-to-one relationship with a single source table y. Primary key values are copied
-        from y to x. A unit of source data is formed by a single row of y and rows from
-        foreign tables and/or inverted foreign tables of y. (Most common option)
-        - x has a one-to-many relationship with multiple source tables. The data of the source tables (and
-        foreign tables or inverted foreign tables) will be combined to form a single unit of source data.
-        This can be done in two ways:
-            - The data of the source tables can be merged. Here, data rows from different source tables are
-            combined to a single unit, if the row's primary key values are identical. If a primary key value
-            of a source table has no analog in another source table, its row is taken independently.
-            - The data of the source tables can be concatenated. Here, the source tables are processed
-            independently one after the other to form units of source data together with their foreign tables or
-            inverted foreign tables. The primary key values of x will be 0-indexed integers.
-        - If x is a foreign table of another target table x', the relationship to source tables can be
-        inherited from x'. If x' itself inherits the relationship of another target table x'', this
-        inheritance is propagated to x. The primary key values of x will be 0-indexed integers and all its rows
-        will be de-duplicated. The primary key values of x will be used as foreign key values in x'.
+
+    - *x* has a one-to-one relationship with a single source table *y*. Primary key values are copied
+      from *y* to *x*. A unit of source data is formed by a single row of *y* and rows from
+      foreign tables and/or inverted foreign tables of *y*. (Most common option)
+    - *x* has a one-to-many relationship with multiple source tables. The data of the source tables (and
+      foreign tables or inverted foreign tables) will be combined to form a single unit of source data.
+      This can be done in two ways:
+
+        - The data of the source tables can be merged. Here, data rows from different source tables are
+          combined to a single unit, if the row's primary key values are identical. If a primary key value
+          of a source table has no analog in another source table, its row is taken independently.
+        - The data of the source tables can be concatenated. Here, the source tables are processed
+          independently one after the other to form units of source data together with their foreign tables or
+          inverted foreign tables. The primary key values of *x* will be 0-indexed integers.
+
+    - If *x* is a foreign table of another target table *x'*, the relationship to source tables can be
+      inherited from *x'*. If *x'* itself inherits the relationship of another target table *x''*, this
+      inheritance is propagated to *x*. The primary key values of *x* will be 0-indexed integers and all its rows
+      will be de-duplicated. The primary key values of *x* will be used as foreign key values in *x'*.
 
     Optionally, you can define a condition to filter out units of source data that should not be considered in
-    the mapping. Of the condition evaluates to false for a unit of source data, it is fully removed from the
-    transformation process. You can view the condition at the "If" below "Current table mapping". By default,
-    it is always true and all source data is considered
+    the mapping. If the condition evaluates to ``False`` for a unit of source data, it is fully removed from the
+    transformation process of this target table. By default, the
+    :class:`~graphxplore.DataMapping.Conditionals.AlwaysTrueOperator` is used and all source data is taken into the
+    transformation
     """
     type : Optional[TableMappingType] = None
     source_tables : List[str] = field(default_factory=list)
@@ -77,14 +81,19 @@ class TableMapping:
                             to_inherit=input_dict['to_inherit'],condition=condition)
 
 class DataMapping:
+    """This class summarizes all individual :class:`VariableMapping` objects for a whole dataset via a dictionary of
+    table -> variable -> :class:`VariableMapping`
+
+    :param source: The :class:`~graphxplore.MetaDataHandling.MetaData` of the source dataset
+    :param target: The :class:`~graphxplore.MetaDataHandling.MetaData` of the source structure
+    :param table_mappings: The table mapping for each table. Can be filled later, defaults to ``None``.
+    :param variable_mappings: The dictionary of all variable mappings for all tables. Can be filled later, defaults
+        to ``None``.
+    """
     def __init__(self, source : MetaData, target : MetaData,
                  table_mappings: Optional[Mapping[str, TableMapping]] = None,
                  variable_mappings : Optional[Mapping[str, Mapping[str, VariableMapping]]] = None):
-        """This class summarizes all individual :class:`VariableMapping` objects for a whole dataset via a dictionary of
-         table -> variable -> :class:`VariableMapping`
-
-        :param table_mappings: The table mapping for each table, defaults to None
-        :param variable_mappings: The dictionary of all variable mappings for all tables, defaults to None
+        """Constructor method
         """
         for table in source.get_table_names():
             if not source.has_primary_key(table):
@@ -241,6 +250,13 @@ class DataMapping:
         return self.table_mappings[table]
 
     def foreign_key_is_for_inheritance(self, table: str, foreign_key: str) -> bool:
+        """Checks if ``foreign_key`` is marked for inheritance, i.e its foreign table inherits the table mapping
+        from ``table``
+
+        :param table: The target table to check the foreign key for
+        :param foreign_key: The foreign key, an exception will be raised if this is not a foreign key of table ``table``
+        :return: Returns ``True`` if the foreign table of ``foreign_key`` is inheriting from ``table``
+        """
         if foreign_key not in self.target.get_foreign_keys(table):
             raise AttributeError('"' + foreign_key + '" is not a foreign key of target table "' + table + '"')
         foreign_table = self.target.get_foreign_keys(table)[foreign_key]
@@ -264,8 +280,8 @@ class DataMapping:
 
     @staticmethod
     def from_dict(input_dict : dict, source: MetaData, target: MetaData) -> 'DataMapping':
-        """Reads :class:`VariableMapping` and class:`TableMapping` objects from a dictionary and combines them with
-        the specified source and target :class:`MetaData`
+        """Reads :class:`~graphxplore.DataMapping.VariableMapping` and :class:`TableMapping` objects from a dictionary
+        and combines them with the specified source and target :class:`~graphxplore.MetaDataHandling.MetaData`
 
         :param input_dict: The input dictionary
         :param source: The metadata of the source dataset
@@ -302,8 +318,8 @@ class DataMapping:
     @staticmethod
     def from_json(json_path : str, source: MetaData, target: MetaData,
                   file_encoding : Optional[str] = None) -> 'DataMapping':
-        """Read variable mappings (not the :class:`MetaData` objects) from a JSON and combines them with the specified
-        source and target :class:`MetaData`
+        """Reads :class:`~graphxplore.DataMapping.VariableMapping` and :class:`TableMapping` objects from a JSON
+        and combines them with the specified source and target :class:`~graphxplore.MetaDataHandling.MetaData`
 
         :param json_path: Path to the JSON
         :param source: The metadata of the source dataset
@@ -326,7 +342,7 @@ class DataMapping:
         :param table: The table of the variable to check for
         :param variable: The variable name to check for
         :return: Returns ``True``, if the table and variable exist in the mapping and at least one :class:`MappingCase`
-        was defined
+            was defined
         """
         var_mapping = self.get_variable_mapping(table, variable)
         return len(var_mapping.cases) > 0

@@ -24,12 +24,18 @@ class SourceDataLine:
     """One flattened line of source data optionally containing aggregated data as well.
 
     :param singular_data: The flattened line of data
-    :param aggregated_data: The data that was aggregated for the root primary key of this line, defaults to None
+    :param aggregated_data: The data that was aggregated for the root primary key of this line, defaults to ``None``
     """
     singular_data : Dict[str, Dict[str, Optional[Union[str, int, float]]]]
     aggregated_data : Optional[AggregatedData] = None
 
     def get_singular_value(self, table : str, variable : str) -> Optional[Union[str, int, float]]:
+        """Retrieves the value of ``variable`` contained in this source data line, if ``variable`` was not aggregated
+
+        :param table: The table of ``variable``
+        :param variable: The variable name
+        :return:
+        """
         if table not in self.singular_data:
             raise AttributeError('Table "' + table + '" not found in source data')
         if variable not in self.singular_data[table]:
@@ -245,7 +251,7 @@ class CSVDataFlattener(DataFlattener):
     :param mapping_type: the mapping type of the currently considered minimal target table
     :param lattice_config: The lattices and required variables for singular and optionally aggregated source data retrieval
     :param file_encoding: Specifies the file encoding of all read CSV tables. Will be detected if not specified,
-    defaults to None
+        defaults to None
     """
     def __init__(self, meta: MetaData, data_source: Union[str, Dict[str, List[Dict[str, str]]]], mapping_type : TableMappingType,
                  lattice_config : FlattenerLatticeConfig, file_encoding : Optional[str] = None):
@@ -353,8 +359,8 @@ class DataSegmentor:
     :param inheriting_tables: The tables (keys of dictionary) for which the primary key should be automatically
         generated via a uniqueness check, because they inherit the relation from other target tables (value of dictionary)
     :param data_target: The path to a directory where CSV files are written or a data dictionary where data is inserted
-    :param global_unique_keys: If ``True`` the automatically generated primary key values will be unique across
-    the dataset, defaults to ``False``
+    :param global_unique_keys: If ``True`` the automatically generated primary key values will be unique across the
+        dataset, defaults to ``False``
     """
     def __init__(self, meta : MetaData, lattice : MetaLattice, inheriting_tables : Dict[str, str],
                  data_target : Union[str, Dict[str, List[Dict[str, str]]]], global_unique_keys : bool = False):
@@ -380,7 +386,7 @@ class DataSegmentor:
         """Takes a single line of data and distributes it among the target dataset
 
         :param sub_lattice: The sub-lattice starting at the currently considered target table and
-        containing all related tables with automatically generated primary keys
+            containing all inheriting related tables
         :param row: The line of data to be distributed
         """
         auto_key_values = {table: None for table in self.auto_data}

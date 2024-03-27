@@ -61,13 +61,13 @@ class DataMappingUtils:
 
     @staticmethod
     def get_copy_mapping(source_meta : MetaData, target_meta : MetaData, delete_artifacts : bool = False) -> DataMapping:
-        """Generates mappings for copying all data from a source dataset, optionally deleting artifacts and/or.
+        """Generates mappings for copying all data from a source dataset, optionally deleting artifacts.
         ``target_meta`` is filled with all variables from the source dataset, but tables have to exist already.
         Foreign key relations are inferred from ``source_meta`` if they do not exist already.
 
         :param source_meta: The source metadata
-        :param target_meta: The target metadata, tables must be exist and be identical with the source metadata
-        :param delete_artifacts: If ``True`` artifacts are removed while copying
+        :param target_meta: The target metadata, tables must exist and be identical with the source metadata
+        :param delete_artifacts: If ``True``, artifacts are removed while copying
         :return: Returns the data mapping
         """
         var_mappings = collections.defaultdict(dict)
@@ -110,7 +110,7 @@ class DataMappingUtils:
             where data is inserted
         :param delete_artifacts: If ``True`` artifacts are removed while copying
         :param source_file_encoding: Specifies the file encoding of all source tables, if read from a CSV. Will be
-        detected if not specified, defaults to None
+            detected if not specified, defaults to ``None``
         """
         target_meta = MetaData(source_meta.get_table_names())
         mappings = DataMappingUtils.get_copy_mapping(source_meta, target_meta, delete_artifacts)
@@ -127,10 +127,10 @@ class DataMappingUtils:
 
         :param data_source: The path to a directory where the CSV file is read from or a data dictionary where data is
             retrieved
-        :param source_table : The name of the source table
+        :param source_table: The name of the source table
         :param data_target: The path to a directory where the resulting CSV file is written to or a data dictionary
             where data is inserted
-        :param target_table : The name of the resulting target table
+        :param target_table: The name of the resulting target table
         :param primary_key: The name of the primary key
         :param start_idx: The start index for the primary key, defaults to 0
         :param file_encoding: The file encoding of the CSV file (ascii, utf-8,...) in chardet definition.
