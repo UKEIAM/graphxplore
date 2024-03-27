@@ -4,7 +4,7 @@ from ..data_aggregator import AggregatorType, AggregatorParser
 from ..data_structure_transformer import SourceDataLine
 
 class Conclusion:
-    """This is the abstract parent class of all conclusions of :class:`MappingCase` objects.
+    """This is the abstract parent class of all conclusions of :class:`~graphxplore.DataMapping.MappingCase` objects.
 
     :param target_data_type: The data type of the target variable
     """
@@ -35,7 +35,7 @@ class Conclusion:
         """Generates a :class:`Conclusion` object from an input string if it is valid
 
         :param input_str: The input string
-        :return: Returns the generated conclusion or None, if the string was invalid
+        :return: Returns the generated conclusion or ``None``, if the string was invalid
         """
         raise NotImplemented('Never call parent class')
 
