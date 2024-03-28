@@ -17,17 +17,18 @@ class HistogramYScaleType(str, Enum):
     Fraction = 'Fraction'
 
 class DashboardBuilder:
-    """This class generates plots univariate and bivariate distributions by querying a :class:`BaseGraph` stored in
-    a Neo4J database. The plots are generated using the plotly package. Additionally, subgroups of ``main_table``
-    primary keys can be defined to jointly plot and compare distributions of groups.
+    """This class generates plots univariate and bivariate distributions by querying a
+    :class:`~graphxplore.Basis.BaseGraph.BaseGraph` stored in a Neo4J database. The plots are generated using the
+    plotly package. Additionally, subgroups of ``main_table`` primary keys can be defined to jointly plot and compare
+    distributions of groups.
 
-    :param meta: The metadata of the :class:`BaseGraph`
+    :param meta: The metadata of the :class:`~graphxplore.Basis.BaseGraph.BaseGraph`
     :param main_table: The origin table of primary keys used for the plot
     :param base_graph_database: The name of the :class:`BaseGraph` Neo4J database
     :param full_table_group: If ``True``, all primary keys of ``main_table`` are used as a group. Defaults to
         ``True``
-    :param groups: Dictionary of name and :class:`GroupSelector` for the defined subgroups. Must have
-        ``main_table`` as their group table. Defaults to None
+    :param groups: Dictionary of name and :class:`~graphxplore.GraphDataScience.GroupSelector` for the defined
+        subgroups. Must have ``main_table`` as their group table. Defaults to None
     :param address: The address of the Neo4J DBMS
     :param auth: User and password of the Neo4J DBMS
     """
