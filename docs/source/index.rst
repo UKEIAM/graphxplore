@@ -16,7 +16,8 @@ like this:
 
 #. Convert the relational data into a graph structure (and load into a Neo4J database) with :ref:`graphtranslation`
 
-#. Generate dashboards and graph-based visualizations for easy exploratory data analysis with :ref:`graphdatascience`
+#. Generate dashboards and graph-based visualizations for easy exploratory data analysis with :ref:`dashboard` and
+   :ref:`graphdatascience`
 
 Subpackages
 -----------
@@ -29,6 +30,7 @@ Subpackages
    graphxplore.DataMapping
    graphxplore.GraphTranslation
    graphxplore.GraphDataScience
+   graphxplore.Dashboard
 
 Indices and tables
 ==================
