@@ -157,31 +157,54 @@ class DataMappingUtils:
                 return idx
 
     @staticmethod
-    def pivot_table(data_source: Union[str, Dict[str, List[Dict[str, str]]]], source_table: str,
-                    data_target: Union[str, Dict[str, List[Dict[str, str]]]], target_table: str,
-                    index_column: str, value_column: str, to_index: Optional[Dict[str, str]] = None,
-                    file_encoding: Optional[str] = None):
-        """
+    def pivot_table(source_table: List[Dict[str, str]], index_column: str, value_column: str,
+                    to_index: Optional[Dict[str, str]] = None,
+                    columns_to_keep: Optional[List[str]] = None) -> List[Dict[str, str]]:
 
-        :param data_source:
-        :param source_table:
-        :param data_target:
-        :param target_table:
-        :param index_column:
-        :param value_column:
-        :param to_index:
-        :param file_encoding:
-        :return:
-        """
-        available_tables = RelationalDataIODevice.get_available_table_names(data_source)
-        if source_table not in available_tables:
-            raise AttributeError('Source table "' + source_table + '" does not exist in data source')
-        RelationalDataIODevice.check_data_location(data_target, write=True)
-        with RelationalDataIODevice(data_source, source_table, file_encoding=file_encoding) as reader:
-            header = reader.get_header()
-            if index_column not in header:
-                raise AttributeError('Index column "' + index_column + '" not found on source table "' + source_table
-                                     + '"')
+        header = source_table[0].keys()
+        if index_column not in header:
+            raise AttributeError('Index column "' + index_column + '" not found in source table')
+        if value_column not in header:
+            raise AttributeError('Value column "' + value_column + '" not found in source table')
+        if columns_to_keep is not None:
+            if index_column in columns_to_keep:
+                raise AttributeError('Index column "' + index_column
+                                     + '" in "columns_to_keep", but it will be used for pivotization')
+            if value_column in columns_to_keep:
+                raise AttributeError('Value column "' + value_column
+                                     + '" in "columns_to_keep", but it will be used to fill pivot columns in result'
+                                       ' table')
+            target_header = copy.deepcopy(columns_to_keep)
+        else:
+            target_header = [column for column in header if column not in [index_column, value_column]]
+        index_vals = set(row[index_column] for row in source_table)
+        if to_index is not None:
+            for index_val, target_column in to_index.items():
+                if index_val not in index_vals:
+                    raise AttributeError('Value to index "' + index_val + '" not found in index column "'
+                                         + index_column + '"')
+                if target_column in target_header:
+                    raise AttributeError('Index target column name "' + target_column
+                                         + '" already existing as column name')
+            target_header += list(to_index.values())
+        else:
+            target_header += list(index_vals)
+        result = []
+        for source_row in source_table:
+            index_row_val = source_row[index_column]
+            if to_index is not None:
+                if index_row_val not in to_index:
+                    continue
+            target_row = {column: '' if column not in source_row else source_row[column] for column in target_header}
+            if to_index is not None:
+                target_row[to_index[index_row_val]] = source_row[value_column]
+            else:
+                target_row[index_row_val] = source_row[value_column]
+            result.append(target_row)
+        return result
+
+
+
 
 
 
