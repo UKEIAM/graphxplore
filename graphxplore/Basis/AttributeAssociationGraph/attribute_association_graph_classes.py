@@ -39,7 +39,8 @@ class DistinctionLabel(str, Enum):
 
 @dataclass
 class AttributeAssociationLabels(BaseLabels):
-    """This labels describe :class:`AttributeAssociationNode` objects and inherit from :class:`BaseLabels`.
+    """These labels describe :class:`AttributeAssociationNode` objects and inherit from
+    :class:`~graphxplore.Basis.BaseGraph.BaseLabels`.
 
     :param membership_labels: One or more labels describing the membership of the node into categories. The origin table
         should always be one label
@@ -60,8 +61,8 @@ class AttributeAssociationLabels(BaseLabels):
     @staticmethod
     def from_label_list(label_list : List[str]) -> 'AttributeAssociationLabels':
         """Generate a :class:`AttributeAssociationLabels` object from a list of strings. The single values should be
-        seperated by semicolons and the :class:`BaseNodeType` label should appear last. Raises an exception if parsing
-        failed.
+        seperated by semicolons and the :class:`~graphxplore.Basis.BaseGraph.BaseNodeType` label should appear last.
+        Raises an exception if parsing failed.
 
         :param label_list: The input list from which the object is parsed
         :return: Returns the parsed object
@@ -90,8 +91,8 @@ class AttributeAssociationLabels(BaseLabels):
     @staticmethod
     def from_label_string(label_string: str) -> 'AttributeAssociationLabels':
         """Generate a :class:`AttributeAssociationLabels` object from a label string. The single values should be
-        seperated by semicolons and the :class:`BaseNodeType` label should appear last. Raises an exception if parsing
-        failed.
+        seperated by semicolons and the :class:`~graphxplore.Basis.BaseGraph.BaseNodeType` label should appear last. Raises an
+        exception if parsing failed.
 
         :param label_string: The input string from which the object is parsed
         :return: Returns the parsed object
@@ -117,12 +118,13 @@ class AttributeAssociationLabels(BaseLabels):
         return return_string
 
 class AttributeAssociationNode(BaseNode):
-    """This class contains the information of a (and inherits from) :class:`BaseNode` of type `BaseNodeType.Attribute`
-    or `BaseNodeType.AttributeBin`. In addition, it captures several statistical traits of the node's attribute within
-    one or multiple groups of primary keys: Its absolute count, its prevalence, and the ratio of group members with a
-    missing value for the variable ``name``. Moreover, if multiple groups are defined, the absolute difference and
-    ratio of prevalence is calculated. If ``positive_group`` and ``negative_group`` are specified, the difference and
-    ratio between their prevalence values is calculated. Else, between the maximum and minimum prevalence
+    """This class contains the information of a (and inherits from) :class:`~graphxplore.Basis.BaseGraph.BaseNode` of type
+    ``BaseNodeType.Attribute`` or ``BaseNodeType.AttributeBin``. In addition, it captures several statistical traits of
+    the node's attribute within one or multiple groups of primary keys: Its absolute count, its prevalence, and the
+    ratio of group members with a missing value for the variable ``name``. Moreover, if multiple groups are defined,
+    the absolute difference and ratio of prevalence is calculated. If ``positive_group`` and ``negative_group`` are
+    specified, the difference and ratio between their prevalence values is calculated. Else, between the maximum and
+    minimum prevalence
 
     :param node_id: The internal Neo4J ID of the :class:`~graphxplore.Basis.BaseGraph.BaseNode`. Used for identity
         checks. As a result, nodes can only be compared if originating from the same

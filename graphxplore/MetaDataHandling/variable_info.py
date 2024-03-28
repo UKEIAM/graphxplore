@@ -47,7 +47,8 @@ class MetricDistribution:
     :param q3: The third quartile
     :param lower_fence: The maximum of the minimal value and ``q1`` - 1.5 interquartile range
     :param upper_fence: The minimum of the maximal value and ``q3`` + 1.5 interquartile range
-    :param outliers: The list of values smaller than ``lower_fence`` or larger than ``upper_fence``
+    :param outliers: The list of values smaller than ``lower_fence`` or larger than ``upper_fence`` which are not
+        annotated as artifacts
     :param missing_count: Count of cell values which are missing values
     :param artifact_count: Count of artifact cells
     """
@@ -78,13 +79,15 @@ class CategoricalDistribution:
 class ArtifactMode(str, Enum):
     """
     Here, you can choose the level to which GraphXplore should detect artifacts:
+
     - NoArtifacts: GraphXplore detects no artifacts
-    - OnlyDataTypeMismatch: GraphXplore considers cell values artifacts which do not match the data type of the variable
-    - DataTypeMismatchAndOutliers: In addition to data type mismatch artifacts, GraphXplore considers extreme outliers as
-      artifacts. For categorical variables where the top 10 most frequent categories account for at 50% of the data,
-      cell values which are not in the top 10 and appear only once are detected as artifacts. GraphXplore assumes
-      these values to be typos. For metric variables, values which have  no other value within 1.5 interquartile range,
-      are considered artifacts
+    - OnlyDataTypeMismatch: GraphXplore considers cell values artifacts which do not match the data type of the
+      variable
+    - DataTypeMismatchAndOutliers: In addition to data type mismatch artifacts, GraphXplore considers extreme
+      outliers as  artifacts. For categorical variables where the top 10 most frequent categories account for at
+      50% of the data, cell values which are not in the top 10 and appear only once are detected as artifacts.
+      GraphXplore assumes these values to be typos. For metric variables, values which have  no other value within
+      1.5 interquartile range, are considered artifacts
     """
     NoArtifacts = 'NoArtifacts'
     OnlyDataTypeMismatch = 'OnlyDataTypeMismatch'
@@ -123,6 +126,10 @@ class VariableInfo:
     reviewed : Optional[bool] = None
 
     def add_label(self, label : str):
+        """Add a label to the variable, e.g. describing its broad category such as "Laboratory".
+
+        :param label: The label to add, must only contain letters, numbers, hyphens or underscores
+        """
         if label in self.labels:
             raise AttributeError('Label "' + label + '" already assigned')
         if label == '':

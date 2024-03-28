@@ -13,7 +13,7 @@ class MappingCase:
 
     :param conditional: The condition that evaluates to ``True`` or ``False``
     :param conclusion: The conclusion returning the target data, if ``conditional`` evaluates to ``True`` on
-    the input data
+        the input data
     """
     conditional : LogicOperator
     conclusion : Conclusion
@@ -30,10 +30,10 @@ class MappingCase:
 
     @staticmethod
     def from_dict(input_dict : dict) -> 'MappingCase':
-        """Generates a MappingCase object from a dictionary.
+        """Generates a :class:`MappingCase` object from a dictionary.
 
         :param input_dict: The input dictionary
-        :return: Returns the generated MappingCase object
+        :return: Returns the generated :class:`MappingCase` object
         """
         if 'if' not in input_dict:
             raise AttributeError('Dictionary for mapping case must have an if-clause')
@@ -65,8 +65,7 @@ class VariableMapping:
         the given input order until one condition is met, the conclusion of the case is returned. If no condition is
         met, None gets returned.
 
-        :param source_data: The source data flattened by a
-        :class:`DataFlattener` object
+        :param source_data: The source data flattened by a :class:`DataFlattener` object
         :return: Returns the return value of the first conclusion with a met conditional, or None
         """
         for case in self.cases:

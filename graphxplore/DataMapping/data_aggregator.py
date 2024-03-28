@@ -23,10 +23,10 @@ class AggregatorType(str, Enum):
 
 class DataAggregator:
     """This class gathers data of time series, events or other data associated with the same primary key value. To
-    achieve this, a :class:`graphxplore.DataMapping.MetaLattice` object is traversed in inverse order
+    achieve this, a :class:`~graphxplore.DataMapping.MetaLattice` object is traversed in inverse order
     (starting from its maximal elements), and the table data is loaded and assigned to each unique primary key value.
-    Data for variables in `required_vars` is aggregated with the specified :class:`AggregatorType` and
-    :class:`DataType`.
+    Data for variables in ``required_vars`` is aggregated with the specified :class:`AggregatorType` and
+    :class:`~graphxplore.MetaDataHandling.DataType`.
 
     :param meta: The metadata of the whole dataset
     :param lattice: The lattice that will be traversed in inverse order.
@@ -56,7 +56,7 @@ class CSVDataAggregator(DataAggregator):
     :param lattice: The lattice that will be traversed in inverse order
     :param required_vars: The variables required for data aggregation per table
     :param file_encoding: Specifies the file encoding of all read CSV tables. Will be detected if not specified,
-    defaults to None
+        defaults to None
     """
     def __init__(self, data_source : Union[str, Dict[str, List[Dict[str, str]]]], meta: MetaData,  lattice : MetaLattice,
                  required_vars : Mapping[str, Mapping[str, Iterable[Tuple[AggregatorType, DataType]]]],
@@ -182,8 +182,8 @@ class CSVDataAggregator(DataAggregator):
         return agg_val
 
 class AggregatorParser:
-    """This class contains functionality for parsing :class:`graphxplore.DataMapping.Conditionals.AggregatorOperator`
-    and :class:`graphxplore.DataMapping.Conclusions.AggregateConclusion` objects from and to string.
+    """This class contains functionality for parsing :class:`~graphxplore.DataMapping.Conditionals.AggregatorOperator`
+    and :class:`~graphxplore.DataMapping.Conclusions.AggregateConclusion` objects from and to string.
     """
     @staticmethod
     def from_string(input_str : str) -> Optional[Tuple[str, str, DataType, AggregatorType]]:
@@ -222,8 +222,8 @@ class AggregatorParser:
 
     @staticmethod
     def to_str(table : str, var : str, data_type : DataType, aggregator : AggregatorType) -> str:
-        """Converts data of :class:`graphxplore.DataMapping.Conditionals.AggregatorOperator` and
-        :class:`graphxplore.DataMapping.Conclusions.AggregateConclusion` objects to string.
+        """Converts data of :class:`~graphxplore.DataMapping.Conditionals.AggregatorOperator` and
+        :class:`~graphxplore.DataMapping.Conclusions.AggregateConclusion` objects to string.
 
         :param table: The table of variable to aggregate
         :param var: The name of the variable to aggregate
@@ -237,7 +237,7 @@ class AggregatorParser:
     def check_compatibility(table : str, var : str, data_type : DataType, aggregator : AggregatorType,
                             list_aggregation_allowed : bool = True) -> None:
         """Checks if data type and aggregation type match. String values can only be counted or concatenated. For
-        :class:`graphxplore.DataMapping.Conditionals.AggregatorOperator` the ``AggregatorType.List`` type is also valid
+        :class:`~graphxplore.DataMapping.Conditionals.AggregatorOperator` the ``AggregatorType.List`` type is also valid
         for all data types.
 
         :param table: The table of variable to aggregate

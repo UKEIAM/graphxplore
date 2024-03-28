@@ -26,7 +26,7 @@ class BaseLabels:
     """The labels assigned to a :class:`BaseNode`.
 
     :param membership_labels: One or more labels describing the membership of the node into categories. The origin table
-    should always be one label
+        should always be one label
     :param node_type: The type of node
     """
     def __init__(self, membership_labels : Tuple[str, ...], node_type : BaseNodeType):
@@ -228,6 +228,11 @@ class BaseNode:
 
 class BaseEdgeType(str, Enum):
     """The type of :class:`BaseEdge`.
+
+    - UNASSIGNED: invalid, has to be reset later
+    - HAS_ATTR_VAL: points from a primary key node to an attribute node contained in its relational table row
+    - CONNECTED_TO: points from a foreign key node to the primary key node in the same relational table row
+    - ASSIGNED_BIN: points from an attribute node of a metric variable to its assigned attribute bin node
     """
     UNASSIGNED = 'UNASSIGNED'
     HAS_ATTR_VAL = 'HAS_ATTR_VAL'

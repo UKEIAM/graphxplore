@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'GraphXplore'
-copyright = '2023, Louis Bellmann'
+copyright = '2024, Louis Bellmann'
 author = 'Louis Bellmann'
 release = '0.0.9'
 

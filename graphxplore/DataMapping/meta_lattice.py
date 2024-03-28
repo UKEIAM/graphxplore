@@ -4,7 +4,8 @@ from graphxplore.MetaDataHandling.meta_data import MetaData
 
 class MetaLattice:
     """This class captures the partial ordering of primary/foreign key relations of tables in a lattice.
-    Here, y is child of x (and x is parent of y) if x contains the primary key of y as a foreign key.
+    Here, table *y* is a child of  table *x* (and *x* is a parent of *y*) if *x* contains the primary key of *y* as a
+    foreign key. This structure is used to efficiently traverse through the relationships of tables within a dataset
 
     :param children: Direct foreign tables for each table
     """
@@ -125,13 +126,13 @@ class MetaLattice:
         :class:`DataFlattener`.
 
         :param start_table: The start table for the tree
-        :param upward: If `True`, descendants (referenced by `start_table`) are checked.
-        Otherwise, ancestors (referencing `start_table`) are checked. Defaults to `True`
+        :param upward: If ``True``, descendants (referenced by `start_table`) are checked. Otherwise, ancestors
+            (referencing ``start_table``) are checked. Defaults to ``True``
         :return: Returns ``True`` if a multi reference was found, ``False`` otherwise
         """
         if start_table not in self.children:
-            raise AttributeError('Start table "' + start_table + '" for multiple reference check not contained in '
-                                                                 'lattice')
+            raise AttributeError('Start table "' + start_table
+                                 + '" for multiple reference check not contained in lattice')
         queue = [start_table]
         visited = set()
         while len(queue) > 0:
@@ -145,9 +146,9 @@ class MetaLattice:
         return False
 
     def get_ancestor_lattice(self, start_tables: Iterable[str], required_tables: Iterable[str]) -> 'MetaLattice':
-        """Generates a sub-lattice, starting from `start_tables` and traversing the lattice in reverse order until
-        all `required_tables` were found. As a result, tables are added to the sub-lattice if they reference members of
-        `start_tables` as foreign tables or reference foreign tables with that behaviour. All non-related tables of
+        """Generates a sub-lattice, starting from ``start_tables`` and traversing the lattice in reverse order until
+        all ``required_tables`` were found. As a result, tables are added to the sub-lattice if they reference members
+        of ``start_tables`` as foreign tables or reference foreign tables with that behaviour. All non-related tables of
         the overall lattice are removed.
 
         :param start_tables: The tables from which the reverse traversal is started

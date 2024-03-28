@@ -21,7 +21,7 @@ class MetaData:
 
     @staticmethod
     def load_from_json(filepath: str, file_encoding : Optional[str] = None) -> 'MetaData':
-        """Reads a :class:`Metadata`object from a JSON.
+        """Reads a :class:`Metadata` object from a JSON.
 
         :param filepath: Path to the JSON
         :param file_encoding: file encoding of the JSON
@@ -36,7 +36,7 @@ class MetaData:
 
     @staticmethod
     def from_dict(data : dict) -> 'MetaData':
-        """Parses a :class:`Metadata`object from a dictionary.
+        """Parses a :class:`Metadata` object from a dictionary.
 
         :param data: The input dictionary
         :return: Returns the parsed object
@@ -186,8 +186,8 @@ class MetaData:
         return self.data[table]['variables'][variable]
 
     def assign_primary_key(self, table : str, primary_key : str) -> None:
-        """Assigns a primary key for the specified table. Raises an exception if the `table` already has a primary key,
-        or `primary_key` is not a variable of `table`
+        """Assigns a primary key for the specified table. Raises an exception if ``table`` already has a primary key,
+        or ``primary_key`` is not a variable of ``table``
 
         :param table: The name of the table, i.e. its file name with '.csv' omitted
         :param primary_key: The name of the primary key, i.e. the column name
@@ -230,8 +230,8 @@ class MetaData:
             self.data[table]['primary_key'] = primary_key
 
     def add_foreign_key(self, table : str, foreign_table : str, foreign_key : str) -> None:
-        """Adds a foreign key and its foreign origin table to a specified table. `foreign_key` must be a variable of
-        `table` and a primary key of `foreign_table`.
+        """Adds a foreign key and its foreign origin table to a specified table. ``foreign_key`` must be a variable of
+        ``table`` and a primary key of ``foreign_table``.
 
         :param table: The name of the table, i.e. its file name with '.csv' omitted
         :param foreign_table: The name of the foreign table, i.e. its file name with '.csv' omitted

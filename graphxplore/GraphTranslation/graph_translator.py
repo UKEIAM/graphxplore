@@ -15,7 +15,8 @@ class GraphTranslator:
     to a node in the graph structure. Cell nodes are connected to the node for their primary key value via an edge.
     This way, multiple primary keys with some identical cell value share a neighbor and are connected if they are in a
     foreign key relation. As a result, efficient data lookup can be achieved while avoiding complex joins across
-    different tables. The generated graph forms the basis for all further data science methods.
+    different tables. The generated :class:`~graphxplore.Basis.BaseGraph.BaseGraph` forms the basis for all further
+    data exploration/analysis methods.
 
     :param metadata: The metadata of the relational dataset
     :param missing_vals: This cell values are skipped and not added to the generated graph. Convenient for data with
@@ -55,7 +56,7 @@ class GraphTranslator:
         :param output_type: The type of output. Either CSV or a Neo4j database, defaults to CSV
         :param overwrite: If written to an existing Neo4j database, overwriting has to be set here
         :param address: The address of the Neo4J DBMS. Can be generated with
-            :class:`~graphxplore.Basis.GraphDatabaseUtils.get_neo4j_address(). Will only be used if graph should be
+            :func:`~graphxplore.Basis.GraphDatabaseUtils.get_neo4j_address()`. Will only be used if the graph should be
             written to database
         :param auth: username and password to access the Neo4j DBMS. Will only be used if graph should be written to
             database

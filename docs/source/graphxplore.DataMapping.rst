@@ -3,29 +3,34 @@
 graphxplore.DataMapping package
 ===============================
 
-This subpackage can be used to clean your data from artifacts or conduct ETL processes. The workflows of this package
-are independent of the :ref:`graphtranslation` and :ref:`graphdatascience` and can in principal be used without the
-necessity of graph-based data representation. All ETL processes can be stored as JSON file for reusability.
+This subpackage can be used to clean your data from artifacts or conduct more complex ETL processes. The workflows of
+this package are independent of the :ref:`graphtranslation` and :ref:`graphdatascience` and can be used without the
+necessity for graph-based data representation. All ETL processes can be stored as JSON files for reusability.
 
 The central class is :class:`~graphxplore.DataMapping.DataMapping`. It contains the
 :class:`~graphxplore.MetaDataHandling.MetaData` objects of the source dataset and the target data structure.
-For each variable (with the exception of some primary keys) of the target structure a
-:class:`~graphxplore.DataMapping.VariableMapping` must be defined. A
-:class:`~graphxplore.DataMapping.VariableMapping` contains one or multiple
+It contains mappings between the source and target tables as :class:`~graphxplore.DataMapping.TableMapping` objects.
+These can describe one-to-one, one-to-many, many-to-one, or many-to-many relationships.
+Mapping rules on the variable-level are stored as :class:`~graphxplore.DataMapping.VariableMapping` objects. They must
+be defined for each variable (with the exception of primary keys and some foreign keys) of the target data structure.
+Each :class:`~graphxplore.DataMapping.VariableMapping` contains one or multiple
 :class:`~graphxplore.DataMapping.MappingCase` objects which in turn each contain a
 :class:`~graphxplore.DataMapping.Conditionals.LogicOperator` and a
 :class:`~graphxplore.DataMapping.Conclusions.Conclusion`. The :class:`~graphxplore.DataMapping.MappingCase` objects are
-checked in input order. If the :class:`~graphxplore.DataMapping.Conditionals.LogicOperator` returns ``True`` on the
-given source line the return of the :class:`~graphxplore.DataMapping.Conclusions.Conclusion` is triggered. If the
-:class:`~graphxplore.DataMapping.Conditionals.LogicOperator` returns ``False`` the next
+checked in input order. If the function :func:`~graphxplore.DataMapping.Conditionals.LogicOperator.valid` of the
+:class:`~graphxplore.DataMapping.Conditionals.LogicOperator` returns ``True`` on the
+given unit of source data, :func:`~graphxplore.DataMapping.Conclusions.Conclusion.get_return` of the
+:class:`~graphxplore.DataMapping.Conclusions.Conclusion` is triggered. If
+:class:`~graphxplore.DataMapping.Conditionals.LogicOperator.valid` returns ``False`` the next
 :class:`~graphxplore.DataMapping.MappingCase` is checked. If no conditional is met, ``None`` is returned. Code for a
 single :class:`~graphxplore.DataMapping.VariableMapping` could look like
 
 ::
 
     >>> from graphxplore.MetaDataHandling import DataType
-    >>> from graphxplore.DataMapping import VariableMapping, MappingCase
-    >>> from graphxplore.DataMapping.Conditionals import StringOperator, StringOperatorType, MetricOperator, MetricOperatorType, AndOperator, AlwaysTrueOperator
+    >>> from graphxplore.DataMapping import VariableMapping, MappingCase, SourceDataLine
+    >>> from graphxplore.DataMapping.Conditionals import (StringOperator, StringOperatorType, MetricOperator,
+    >>>                                                   MetricOperatorType, AndOperator, AlwaysTrueOperator)
     >>> from graphxplore.DataMapping.Conclusions import CopyConclusion, FixedReturnConclusion
     # value for variable 'var' is decimal, larger than 0 and value for variable 'another_val' is a string and contains 'nana'
     # then copy value for variable 'var'
@@ -66,49 +71,53 @@ themselves `pk` as a foreign key can be aggregated with
 foreign key value for `pk` (or across multiple tables) is gathered and some aggregate calculated (e.g. count,
 minimal value, etc.). This can be useful e.g. for aggregation of time series.
 
-Because of this strategy, it is important to identify most primary keys of the target data structure with primary keys
-of the source dataset. An exception are primary keys of the target data structure that are also referenced as foreign
-keys. These can be generated automatically (will be 0-indexed integers) and do not have to have an analog in the
-source dataset. :class:`~graphxplore.DataMapping.VariableMapping` of primary keys with one (or multiple) analog can
-look like this
+This automation strategy is enabled by the :class:`~graphxplore.DataMapping.TableMapping` which must be defined for
+each target table. Examples might look like:
 
 ::
 
-    >>> from graphxplore.MetaDataHandling import DataType
-    >>> from graphxplore.DataMapping import VariableMapping, MappingCase
+    >>> from graphxplore.MetaDataHandling import MetaData, DataType
+    >>> from graphxplore.DataMapping import TableMapping, MappingCase, TableMappingType, DataMapping
     >>> from graphxplore.DataMapping.Conditionals import MetricOperator, MetricOperatorType, AlwaysTrueOperator
-    >>> from graphxplore.DataMapping.Conclusions import CopyConclusion, MergePrimaryKeysConclusion, ConcatenateTablesConclusion
-    # copy primary key 'source_pk' of 'SourceTable' to primary key 'target_pk' of 'TargetTable' (one-to-one mapping)
-    >>> one_to_one = VariableMapping(target_table='TargetTable', target_variable='target_pk', cases=[
-    >>>         MappingCase(conditional=AlwaysTrueOperator(),
-    >>>                     conclusion=CopyConclusion(origin_table='SourceTable', target_data_type=DataType.Integer,
-    >>>                                               var_to_copy='source_pk'))])
-    # copy primary key 'source_pk' of 'SourceTable' to primary key 'target_pk' of 'TargetTable'
-    # only if value for variable 'var' is an integer and equals 0 (filtered one-to-one mapping)
-    >>> filtered_one_to_one = VariableMapping(target_table='TargetTable', target_variable='target_pk', cases=[
-    >>>         MappingCase(conditional=MetricOperator(table='OtherSourceTable', variable='var', value=0,
-    >>>                     data_type=DataType.Integer, compare=MetricOperatorType.Equals),
-    >>>                     conclusion=CopyConclusion(origin_table='SourceTable', target_data_type=DataType.Integer,
-    >>>                                               var_to_copy='source_pk'))])
-    # merge the primary keys (and data) of two source tables 'FirstSourceTable' and 'SecondSourceTable' into a single
-    # target primary key 'target_pk'. SourceDataLine objects from 'FirstSourceTable' and 'SecondSourceTable' with the
-    # same value for 'source_pk' are merged. This can be used
-    >>> merge = VariableMapping(target_table='TargetTable', target_variable='target_pk', cases=[
-    >>>         MappingCase(conditional=AlwaysTrueOperator(),
-    >>>                     conclusion=MergePrimaryKeysConclusion(tables_keys_to_merge={
-    >>>                         'FirstSourceTable' : 'source_pk',
-    >>>                         'SecondSourceTable' : 'source_pk'
-    >>>                                                           }, target_data_type=DataType.Integer)])
+    >>>
+    >>> source_meta = MetaData.load_from_json(filepath='/source_meta.json')
+    >>> target_meta = MetaData.load_from_json(filepath='/target_meta.json')
+    >>> data_mapping = DataMapping(source=source_meta, target=target_meta)
+    # one-to-one mapping between 'SourceTable' and 'TargetTable'
+    # each source data line will contain a row of 'SourceTable' and one row of each foreign table (potentially across
+    # foreign table chains) of the corresponding foreign key value
+    >>> one_to_one = TableMapping(type=TableMappingType.OneToOne, source_tables=['SourceTable'])
+    >>> data_mapping.assign_table_mapping(table='TargetTable', table_mapping=one_to_one)
+    # again a one-to-one mapping, but with an added condition. If this condition is not met for a source data line, the
+    # whole line will be skipped. Adding condition is possible for all table mapping types except inherited table mappings
+    >>> added_condition = MetricOperator(table='ForeignSourceTable', variable='var', value=0,
+    >>>                                  data_type=DataType.Integer, compare=MetricOperatorType.Equals)
+    >>> filtered_one_to_one = TableMapping(type=TableMappingType.OneToOne, source_tables=['SourceTable'],
+    >>>                                    condition=added_condition)
+    >>> data_mapping.assign_table_mapping(table='TargetTable', table_mapping=filtered_one_to_one)
+    # merge the the of two source tables 'FirstSourceTable' and 'SecondSourceTable' into a single
+    # target table 'TargetTable' (many-to-one). SourceDataLine objects from 'FirstSourceTable' and 'SecondSourceTable'
+    # with the same primary key value are merged. This way, data rows from multiple source tables can be combined into
+    # one target data row
+    >>> merge = TableMapping(TableMappingType.Merge, source_tables=['FirstSourceTable', 'SecondSourceTable'])
+    >>> data_mapping.assign_table_mapping(table='TargetTable', table_mapping=merge)
     # data from two source tables 'FirstSourceTable' and 'SecondSourceTable' is processed one after another into
-    # SourceDataLine objects and  concatenated into a single target table 'TargetTable'
-    >>> concat = VariableMapping(target_table='TargetTable', target_variable='target_pk', cases=[
-    >>>         MappingCase(conditional=AlwaysTrueOperator(),
-    >>>                     conclusion=ConcatenateTablesConclusion(tables_to_append=['FirstSourceTable',
-    >>>                                                            'SecondSourceTable'])])
+    # SourceDataLine objects and concatenated into a single target table 'TargetTable' (many-to-one). No merging of
+    # source data rows is conducted
+    >>> concatenate = TableMapping(TableMappingType.Concatenate, source_tables=['FirstSourceTable', 'SecondSourceTable'])
+    >>> data_mapping.assign_table_mapping(table='TargetTable', table_mapping=concatenate)
+    # If 'ForeignTargetTable' is a foreign table (or foreign table of foreign table ...) of 'TargetTable', it can
+    # inherit the mapping type of 'TargetTable'. the rows of both tables will be created together and thus the
+    # result data will be split. This can be useful to make the target dataset for manageable. If the relation of
+    # 'TargetTable' is 'one-to-one', this will become 'one-to-many'. If  its relation is 'many-to-one', it will become
+    # 'many-to-many'.
+    >>> inherited = TableMapping(TableMappingType.Inherited, to_inherit='TargetTable')
+    >>> data_mapping.assign_table_mapping(table='ForeignTargetTable', table_mapping=inherited)
 
 Data mapping can be quite complex and there exist many functionalities in this subpackage.
 :class:`~graphxplore.DataMapping.DataMappingUtils` can be used to ease some common workflows. For further impressions
-check out `test/DataMapping/test_data_mapping.py` in the graphxplore git repository.
+check out `test/DataMapping/test_data_mapping.py` in the
+`graphxplore Github repository <https://github.com/UKEIAM/graphxplore>`_.
 
 Submodules
 -----------

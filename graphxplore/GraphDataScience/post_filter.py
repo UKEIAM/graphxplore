@@ -9,6 +9,11 @@ class AttributeAssociationGraphPostFilter:
     select the attributes based on a composition of metric values (:class:`CompositionGraphPostFilter`).
     """
     def filter_graph(self, graph : AttributeAssociationGraph) -> AttributeAssociationGraph:
+        """Filters the given graph by its statistical traits
+
+        :param graph: The graph to filter
+        :return: Returns the new, filtered graph
+        """
         raise NotImplementedError('Never call parent class')
 
 class GroupFilterMode(str, Enum):
@@ -18,7 +23,8 @@ class GroupFilterMode(str, Enum):
     All = 'All'
 
 class ThresholdGraphPostFilter(AttributeAssociationGraphPostFilter):
-    """This class filters the nodes and edges of a :class:`AttributeAssociationGraph` based on property thresholds. The
+    """This class filters the nodes and edges of a
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationGraph` based on property thresholds. The
     thresholds can be arbitrarily combined by conjunctions and disjunctions.
 
     :param node_filter: The filter applied to nodes
@@ -57,22 +63,26 @@ class CompositionGraphPostFilter(AttributeAssociationGraphPostFilter):
     """This class filters an attribute association graph based on user-defined score composition ratios. For each score,
     the nodes or edges with the highest values will be selected and the graph will be filled with them according to the
     specified ratio. The node ratio can be built out of the following three metrics:
-        - high maximum prevalence: These attributes appear often in the group with the highest prevalence, but are not
-          necessarily selective for that specific group
-        - high prevalence difference: These attributes appear more often in one group compared another in absolute
-          terms. Thus, this attribute has a sensitivity for that group. But they could still have some prevalence in
-          another group, meaning their specificity could be low
-        - high prevalence ratio: These attributes are specific for one group compared to another group. But all
-          prevalence could be low and the sensitivity of the attribute could be low as well as a result.
+
+    - high maximum prevalence: These attributes appear often in the group with the highest prevalence, but are not
+      necessarily selective for that specific group
+    - high prevalence difference: These attributes appear more often in one group compared another in absolute
+      terms. Thus, this attribute has a sensitivity for that group. But they could still have some prevalence in
+      another group, meaning their specificity could be low
+    - high prevalence ratio: These attributes are specific for one group compared to another group. But all
+      prevalence could be low and the sensitivity of the attribute could be low as well as a result.
+
     The edge ratio can be built out of the following three metrics for a relation A->B:
-        - high maximum conditional prevalence: Many members with attribute A, also exhibit attribute B in the group
-          with the highest conditional prevalence. However, B could just have a high prevalence itself and thus the
-          added condition of A would have little influence
-        - high maximum conditional increase: The added condition of A has a high sensitivity for the presence of B in at
-          least one group. However, the prevalence B could be high as well, meaning A would not be specific for B
-        - high maximum conditional increase: The added condition of A has a high specificity for the presence of B in at
-          least one group. However, the conditional prevalence could be low, meaning A would not be sensitive for the
-          presence of B
+
+    - high maximum conditional prevalence: Many members with attribute A, also exhibit attribute B in the group
+      with the highest conditional prevalence. However, B could just have a high prevalence itself and thus the
+      added condition of A would have little influence
+    - high maximum conditional increase: The added condition of A has a high sensitivity for the presence of B in at
+      least one group. However, the prevalence B could be high as well, meaning A would not be specific for B
+    - high maximum conditional increase: The added condition of A has a high specificity for the presence of B in at
+      least one group. However, the conditional prevalence could be low, meaning A would not be sensitive for the
+      presence of B
+
     Additionally, a minimal prevalence and conditional prevalence, as well as maximum missing value ratio can be specified.
     Moreover, the number of nodes and edges in the filtered graph can be adjusted using a percentage of the unfiltered
     amount or an absolute value. If  both the percentage and absolute value are specified, the smallest resulting
@@ -81,25 +91,32 @@ class CompositionGraphPostFilter(AttributeAssociationGraphPostFilter):
     NOTE: Since attribute association graphs with only one group have no prevalence difference and ratio metrics, only
     the nodes with the highest prevalence will be selected
 
-    :param min_prevalence: Nodes with a prevalence below this value will be removed
-    :param min_prevalence_mode: Specifies if only one or all groups must pass `min_prevalence`
-    :param min_cond_prevalence: Edges with a conditional prevalence below this value in all groups will be removed
-    :param min_cond_prevalence_mode: Specifies if only one or all groups must pass `min_cond_prevalence`
-    :param max_missing: Nodes with a missing ratio above this value will be removed
-    :param max_missing_mode: Specifies if only one or all groups must pass `max_missing`
+    :param min_prevalence: Nodes with a prevalence below this value will be removed, defaults to 1%
+    :param min_prevalence_mode: Specifies if only one or all groups must pass `min_prevalence`, defaults to
+        ``GroupFilterMode.All``
+    :param min_cond_prevalence: Edges with a conditional prevalence below this value in all groups will be removed,
+        defaults to 5%
+    :param min_cond_prevalence_mode: Specifies if only one or all groups must pass `min_cond_prevalence`,
+        defaults to ``GroupFilterMode.All``
+    :param max_missing: Nodes with a missing ratio above this value will be removed, defaults to 20%
+    :param max_missing_mode: Specifies if only one or all groups must pass `max_missing`, defaults to
+        ``GroupFilterMode.All``
     :param perc_nof_nodes: Percentage of nodes that should remain of all the nodes passing `min_prevalence` and
-        `max_missing`
-    :param perc_nof_edges: Percentage of edges that should remain of all edges passing `min_cond_prevalence`
+        `max_missing`, defaults to 50%
+    :param perc_nof_edges: Percentage of edges that should remain of all edges passing `min_cond_prevalence`, defaults
+        to 25%
     :param node_comp_ratio: The percentage of nodes with high maximal prevalence/difference/ratio after filtering.
         Ratios must sum to 1.0. Defaults to 20%/50%/30%
     :param edge_comp_ratio: The percentage of edges with
         high maximal conditional prevalence/maximal conditional increase/maximal conditional increase ratio after
         filtering. Ratios must sum to 1.0. Defaults to 20%/50%/30%
-    :param max_nof_nodes: The maximum number of nodes that should exist in the graph after filtering, defaults to None
-    :param max_nof_edges: The maximum number of edges that should exist in the graph after filtering, defaults to None
+    :param max_nof_nodes: The maximum number of nodes that should exist in the graph after filtering, defaults to
+        ``None`` (meaning no filtering applied with this threshold)
+    :param max_nof_edges: The maximum number of edges that should exist in the graph after filtering, defaults to
+        ``None``  (meaning no filtering applied with this threshold)
     :param include_conditional_decrease: Specifies, if negative absolute conditional increase and conditional
         increase ratio smaller than 1.0 should be identified as high conditional increase (and ratio) in the edge
-        composition. Defaults to False
+        composition. Defaults to ``False``
     """
     def __init__(self, min_prevalence : float = 0.01, min_prevalence_mode : GroupFilterMode = GroupFilterMode.All,
                  min_cond_prevalence : float = 0.05, min_cond_prevalence_mode : GroupFilterMode = GroupFilterMode.All,
@@ -222,14 +239,15 @@ class CompositionGraphPostFilter(AttributeAssociationGraphPostFilter):
         return result
 
 class ThresholdFilter:
-    """This class is an abstract parent for classes filtering :class:`AttributeAssociationNode` and
-    :class:`AttributeAssociationEdge` objects by parameter thresholds.
+    """This class is an abstract parent for classes filtering
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationNode` and
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationEdge` objects by parameter thresholds.
     """
     def is_valid(self, obj_to_filter : Union[AttributeAssociationNode, AttributeAssociationEdge]) -> bool:
         """Checks the given filter criteria.
 
         :param obj_to_filter: The object to filter
-        :return: Returns `True`, if the object passed the filter criteria, `False` otherwise
+        :return: Returns ``True``, if the object passed the filter criteria, ``False`` otherwise
         """
         raise NotImplemented('Never call parent class')
 
@@ -246,11 +264,15 @@ AVAILABLE_PARAMS = {
 }
 
 class ThresholdParamFilter(ThresholdFilter):
-    """This class filters one specific parameter of a :class:`AttributeAssociationNode` or
-    :class:`AttributeAssociationEdge` object and checks if the parameter value  lies in the
-    interval [`min_val`;`max_val`]. If the property is group dependent, the filter mode must be specified.
+    """This class filters one specific parameter of a
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationNode` or
+    :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationEdge` object and checks if the parameter
+    value  lies in the
+    interval [``min_val``; ``max_val``]. If the property is group dependent, the filter mode must be specified.
 
-    :param param_to_filter: The value for which will be filtered. Must exist in `AVAILABLE_PROPS_WITH_BOUNDS`
+    :param param_to_filter: The value for which will be filtered. Must be a statistical parameter of
+        :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationNode` or
+        :class:`~graphxplore.Basis.AttributeAssociationGraph.AttributeAssociationEdge`
     :param min_val: The lowest allowed property value to pass the filter, defaults to None
     :param max_val: The highest allowed property value to pass the filter, defaults to None
     :param mode: The filter mode required for group-dependent parameters. Specifies, if all or only one group value

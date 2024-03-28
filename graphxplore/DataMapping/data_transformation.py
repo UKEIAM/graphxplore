@@ -110,9 +110,9 @@ class DataTransformation:
             containing the source data set
         :param data_target: The path to a directory where CSV files are written or a data dictionary where data is inserted
         :param global_unique_target_keys: If ``True``, the generated IDs are unique across all
-            automatically generated primary keys, defaults to `False`
+            automatically generated primary keys, defaults to ``False``
         :param source_file_encoding: Specifies the file encoding of all source tables, if read from a CSV. Will be
-            detected if not specified, defaults to None
+            detected if not specified, defaults to ``None``
         """
         with DataSegmentor(self.data_mapping.target, self.data_mapping.target_lattice, self.inheriting_tables,
                            data_target, global_unique_target_keys) as segmentor:

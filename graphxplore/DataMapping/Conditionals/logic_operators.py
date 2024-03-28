@@ -78,8 +78,8 @@ class OrOperator(LogicOperator):
         return '(' + ' OR '.join([str(operator) for operator in self.sub_operators]) + ')'
 
 class NegatedOperator(LogicOperator):
-    """This logic operator negates an input operator ``pos_operator``, i.e. it checks if ``pos_operator`` evaluates to
-    ``False``
+    """This logic operator negates an input operator ``pos_operator``, i.e. it checks if ``pos_operator.valid()``
+    evaluates to ``False``
 
     :param pos_operator: The operator to negate
     """
@@ -96,8 +96,9 @@ class NegatedOperator(LogicOperator):
         return '(NOT ' + str(self.pos_operator) + ')'
 
 class AlwaysTrueOperator(LogicOperator):
-    """This logic operator always evaluates to ``True``. Consequently, its :class:`MappingCase` is always triggered,
-    when checked. As a result, it can be used as a default.
+    """This logic operator always evaluates to ``True``. Consequently, its
+    :class:`~graphxplore.DataMapping.MappingCase` is always triggered, when checked. As a result, it can be used as a
+    default.
     """
     def valid(self, source_data : SourceDataLine) -> bool:
         return True
@@ -146,6 +147,12 @@ class AtomicOperator(LogicOperator):
 
     @staticmethod
     def from_string(input_str: str) -> Optional['AtomicOperator']:
+        """Parses an input string and generates the operator if the string is valid
+
+        :param input_str: The string to parse
+        :return: Returns the parsed operator or ``None`` if ``input_str`` is invalid for this type of
+            operator
+        """
         raise NotImplementedError('Never call the parent class')
 
     @staticmethod
@@ -249,6 +256,13 @@ class StringOperator(AtomicOperator):
 
     @staticmethod
     def check_value(val_to_check : str, to_check_against : str, compare : StringOperatorType) -> bool:
+        """Checks the validity of ``val_to_check``
+
+        :param val_to_check: The value to check the validity for
+        :param to_check_against: The base value to check against
+        :param compare: The type of comparison
+        :return: Returns ``True`` if ``val_to_check`` is valid, else ``False``
+        """
         if compare == StringOperatorType.Equals:
             return val_to_check == to_check_against
         if compare == StringOperatorType.Contains:
@@ -314,6 +328,13 @@ class MetricOperator(AtomicOperator):
     @staticmethod
     def check_value(val_to_check: Union[int, float], to_check_against: Union[int, float],
                     compare: MetricOperatorType) -> bool:
+        """Checks the validity of ``val_to_check``
+
+        :param val_to_check: The value to check the validity for
+        :param to_check_against: The base value to check against
+        :param compare: The type of comparison
+        :return: Returns ``True`` if ``val_to_check`` is valid, else ``False``
+        """
         if compare == MetricOperatorType.Equals:
             return val_to_check == to_check_against
         if compare == MetricOperatorType.Smaller:
@@ -360,10 +381,10 @@ class AggregatorOperator(AtomicOperator):
     :param value: The value to check the aggregated data against
     :param data_type: Only values of this type will be aggregated
     :param aggregator: The type of aggregation
-    :param compare: The comparison between the aggregated data and `value`. Must match `aggregator`. E.g. minimum,
-        maximum or average calculations must be compared with :class:`MetricOperatorType` objects. `AggregatorType.List`
-        must be used with `StringOperatorType.Contains` and `AggregatorType.Concatenate` with `StringOperatorType`
-        objects
+    :param compare: The comparison between the aggregated data and ``value``. Must match ``aggregator``. E.g. minimum,
+        maximum or average calculations must be compared with :class:`MetricOperatorType` objects.
+        ``AggregatorType.List`` must be used with ``StringOperatorType.Contains`` and ``AggregatorType.Concatenate``
+        with :class:`StringOperatorType` objects
     """
     def __init__(self, table : str, variable : str, value : Union[str, int, float], data_type : DataType,
                  aggregator : AggregatorType, compare : Union[StringOperatorType, MetricOperatorType]):
