@@ -1,7 +1,7 @@
 .. _aag:
 
 graphxplore.Basis.AttributeAssociationGraph package
-========================================
+===================================================
 
 *Attribute association graphs* capture statistical traits of attributes (unique variable values) within groups of
 primary keys as nodes, and the conditional dependencies between attributes as edges. These graphs can later be explored
