@@ -156,6 +156,33 @@ class DataMappingUtils:
                     idx += 1
                 return idx
 
+    @staticmethod
+    def pivot_table(data_source: Union[str, Dict[str, List[Dict[str, str]]]], source_table: str,
+                    data_target: Union[str, Dict[str, List[Dict[str, str]]]], target_table: str,
+                    index_column: str, value_column: str, to_index: Optional[Dict[str, str]] = None,
+                    file_encoding: Optional[str] = None):
+        """
+
+        :param data_source:
+        :param source_table:
+        :param data_target:
+        :param target_table:
+        :param index_column:
+        :param value_column:
+        :param to_index:
+        :param file_encoding:
+        :return:
+        """
+        available_tables = RelationalDataIODevice.get_available_table_names(data_source)
+        if source_table not in available_tables:
+            raise AttributeError('Source table "' + source_table + '" does not exist in data source')
+        RelationalDataIODevice.check_data_location(data_target, write=True)
+        with RelationalDataIODevice(data_source, source_table, file_encoding=file_encoding) as reader:
+            header = reader.get_header()
+            if index_column not in header:
+                raise AttributeError('Index column "' + index_column + '" not found on source table "' + source_table
+                                     + '"')
+
 
 
 
