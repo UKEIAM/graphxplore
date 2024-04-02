@@ -166,6 +166,8 @@ class DataMappingUtils:
             raise AttributeError('Index column "' + index_column + '" not found in source table')
         if value_column not in header:
             raise AttributeError('Value column "' + value_column + '" not found in source table')
+        if index_column == value_column:
+            raise AttributeError('Index column and value column cannot both be "' + index_column + '"')
         if columns_to_keep is not None:
             if index_column in columns_to_keep:
                 raise AttributeError('Index column "' + index_column
@@ -174,6 +176,9 @@ class DataMappingUtils:
                 raise AttributeError('Value column "' + value_column
                                      + '" in "columns_to_keep", but it will be used to fill pivot columns in result'
                                        ' table')
+            for column in columns_to_keep:
+                if column not in header:
+                    raise AttributeError('Column "' + column + '" marked for keeping, but not found in source table')
             target_header = copy.deepcopy(columns_to_keep)
         else:
             target_header = [column for column in header if column not in [index_column, value_column]]
