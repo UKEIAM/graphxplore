@@ -1,3 +1,4 @@
+import collections
 import json
 import streamlit as st
 import copy
@@ -20,7 +21,7 @@ from src.utils import VariableHandle, ListHandle, ICON_PATH, FunctionWrapper
 from src.common_state_keys import (MAIN_META_KEY, SOURCE_META_KEY, TARGET_META_KEY, MAIN_MAPPING_KEY,
                                    CLEAN_DATASET_META_KEY, CLEAN_DATASET_SOURCE_DATA_KEY, CLEAN_DATASET_RESULT_DATA_KEY,
                                    CLEAN_DATASET_DEL_ARTIFACTS_KEY, ADD_PK_SOURCE_DATA_KEY, ADD_PK_RESULT_DATA_KEY,
-                                   TRANS_SOURCE_DATA_KEY, TRANS_RESULT_DATA_KEY)
+                                   TRANS_SOURCE_DATA_KEY, TRANS_RESULT_DATA_KEY, PIVOT_SOURCE_DATA_KEY, PIVOT_RESULT_DATA_KEY)
 from src.workflow_widgets import Workflow
 from graphxplore.MetaDataHandling import *
 from graphxplore.DataMapping import *
@@ -433,7 +434,7 @@ if __name__ == '__main__':
     mapping_tab, transform_tab, utils_tab = st.tabs(['Data Mapping', 'Data Transformation', 'Utility'])
 
     with utils_tab:
-        clean_tab, pk_tab = st.tabs(['Clean dataset', 'Add primary key'])
+        clean_tab, pk_tab, pivot_tab = st.tabs(['Clean dataset', 'Add primary key', 'Pivot table'])
         with clean_tab:
             if st.checkbox('Show tooltip', key='clean_tooltip'):
                 """
@@ -521,6 +522,125 @@ if __name__ == '__main__':
                                                            target_pk_table, key='pk_add_download')
                     pk_add_data_downloader.render()
 
+        with pivot_tab:
+            if st.checkbox('Show pivot tooltip'):
+                pivot_msg = """
+                Here, you can restructure your tables by :red[splitting up an *index column* into multiple new columns].
+                Since can be useful to split up data of different types that is stored in one column, e.g. when moving 
+                time series data from a narrow to a wide format.  
+                :red[Each unique value of the index column] (or a subselection of your choice) :red[will form a new 
+                column] in the result table. The cell values of these columns will be given by a *value column* of your 
+                input table. Additionally, you may rename the newly created columns and/or exclude columns from the 
+                input table for result generation. You can choose different index and value column and inspect the 
+                result preview to get used with the concepts
+                """
+                st.markdown(pivot_msg)
+
+            pivot_data_uploader = CSVUploader(
+                PIVOT_SOURCE_DATA_KEY, 'Choose a CSV file for pivotization', key='pivot_upload',
+                accept_multiple_files=False)
+            pivot_data_uploader.render()
+            source_data = VariableHandle(PIVOT_SOURCE_DATA_KEY).get_attr()
+            if len(source_data) == 0:
+                st.info('No CSV table selected yet')
+            else:
+                source_table = next(iter(source_data.values()))
+                st.markdown('### Pivotization Parameters')
+                source_variables = list(source_table[0].keys())
+                index_col, value_col = st.columns(2)
+                index_column = index_col.selectbox('Choose index column', options=source_variables,
+                                                   help='Unique values of this column will form new columns in the '
+                                                        'result table')
+                value_column = value_col.selectbox(
+                    'Choose value column', options=[column for column in source_variables if column != index_column],
+                    help='Cell values of this row will fill the newly created columns'
+                )
+                all_index_vals_dict = collections.defaultdict(int)
+                for row in source_table:
+                    all_index_vals_dict[row[index_column]] += 1
+                sorted_index_counts = sorted(all_index_vals_dict.items(),key=lambda x: x[1], reverse=True)
+                index_vals, index_counts = zip(*sorted_index_counts)
+                index_data = pd.DataFrame({
+                    'index_value' : index_vals, 'count' : index_counts, 'use_value' : [True] * len(index_vals),
+                    'target_column' : copy.deepcopy(index_vals)
+                })
+                index_data = st.data_editor(index_data, column_config={
+                    'index_value' : st.column_config.Column('Value of "' + index_column + '"', disabled=True),
+                    'count': st.column_config.Column('Number of occurrences', disabled=True,
+                                                     help='Number of rows with this index value'),
+                    'use_value' : st.column_config.CheckboxColumn(
+                        'Use value for pivot', help='The checked values will create a new column in the result table',
+                        default=True
+                    ),
+                    'target_column' : st.column_config.TextColumn('Column name in the result table', required=True)
+                }, hide_index=True, disabled=['index_value', 'count'])
+                columns_to_keep_options = [column for column in source_variables
+                                           if column != index_column and column != value_column]
+                columns_to_keep = st.multiselect(
+                    'Which source table columns would you like to add to the result table?',
+                    options=columns_to_keep_options, default=columns_to_keep_options)
+                to_index = {}
+                duplicate_target_cols = []
+                source_target_cols = []
+                used_some_index = False
+                for index, row in index_data.iterrows():
+                    if not row['use_value']:
+                        continue
+                    used_some_index = True
+                    index_val = row['index_value']
+                    target_column = row['target_column']
+                    if target_column in to_index.values():
+                        duplicate_target_cols.append(target_column)
+                        continue
+                    if target_column in columns_to_keep:
+                        source_target_cols.append(target_column)
+                        continue
+                    to_index[index_val] = target_column
+                if not used_some_index:
+                    st.error('You must select at least one index value')
+                elif len(duplicate_target_cols) > 0:
+                    st.error('Target column name duplicate(s): "' + '", "'.join(duplicate_target_cols) + '"')
+                elif len(source_target_cols) > 0:
+                    st.error('Target column name(s) which are already source column name(s) "'
+                             + '", "'.join(source_target_cols) + '"')
+                else:
+                    st.markdown('### Result Preview')
+                    preview_data = []
+                    counter = 0
+                    for source_row in source_table:
+                        target_row = {column : source_row[column] for column in columns_to_keep}
+                        target_row.update({target_column : '' for target_column in to_index.values()})
+                        set_column = source_row[index_column]
+                        if set_column in to_index:
+                            target_row[to_index[set_column]] = source_row[value_column]
+                            preview_data.append(target_row)
+                            counter += 1
+                            if counter > 10:
+                                break
+                    preview_df = pd.DataFrame.from_records(preview_data)
+                    st.dataframe(preview_df)
+
+                    result_data = VariableHandle(PIVOT_RESULT_DATA_KEY, init={}).get_attr()
+
+                    pivot_cont = st.container()
+
+                    def pivot_data():
+                        try:
+                            result = DataMappingUtils.pivot_table(source_table, index_column, value_column, to_index,
+                                                                  columns_to_keep)
+                            VariableHandle(PIVOT_RESULT_DATA_KEY).set_attr({'pivoted_table' : result})
+                            pivot_cont.success('Pivoted data')
+                        except AttributeError as err:
+                            pivot_cont.error('ERROR: ' + str(err))
+
+
+
+                    pivot_cont.button('Pivot table', type='primary', on_click=pivot_data)
+
+                    if len(result_data) > 0:
+                        pk_add_data_downloader = CSVDownloader(PIVOT_RESULT_DATA_KEY, 'Store generated table',
+                                                               'pivoted_table', key='pivot_download')
+                        pk_add_data_downloader.render(pivot_cont)
 
     with mapping_tab:
         if st.checkbox('Show tooltip', key='mapping_tooltip'):
