@@ -16,6 +16,8 @@ ADD_PK_SOURCE_DATA_KEY = 'add_pk_source_data'
 ADD_PK_RESULT_DATA_KEY = 'add_pk_result_data'
 TRANS_SOURCE_DATA_KEY = 'transformation_source_data'
 TRANS_RESULT_DATA_KEY = 'transformation_result_data'
+PIVOT_SOURCE_DATA_KEY = 'pivot_source'
+PIVOT_RESULT_DATA_KEY = 'pivot_result'
 # exploration
 NEO4J_ADDRESS_KEY = 'neo4j_address'
 NEO4J_AUTH_KEY = 'neo4j_auth'

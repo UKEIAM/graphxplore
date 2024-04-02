@@ -73,6 +73,79 @@ def test_primary_key_adding():
     assert str(exc.value) == ('"' + BASE_PATH + '/test_output/util_data_dir_invalid" '
                               'is not a valid directory')
 
+def test_pivot():
+    source = [
+        {'category' : 'first', 'value' : 'some_value', 'metric' : '0.1'},
+        {'category' : 'first', 'value' : '42', 'metric' : '-1.5'},
+        {'category' : 'second', 'value' : 'some_value', 'metric' : '0.1'},
+        {'category' : 'second', 'value' : '7', 'metric' : '0.7'},
+        {'category' : 'third', 'value' : 'some_value', 'metric' : '-1.5'},
+    ]
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'invalid', 'invalid')
+    assert str(exc.value) == 'Index column "invalid" not found in source table'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'invalid')
+    assert str(exc.value) == 'Value column "invalid" not found in source table'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'category')
+    assert str(exc.value) == 'Index column and value column cannot both be "category"'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'value', columns_to_keep=['category', 'value', 'metric'])
+    assert str(exc.value) == 'Index column "category" in "columns_to_keep", but it will be used for pivotization'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'value', columns_to_keep=['value', 'metric'])
+    assert str(exc.value) == ('Value column "value" in "columns_to_keep", but it will be used to fill pivot columns in '
+                              'result table')
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'value', columns_to_keep=['metric', 'invalid'])
+    assert str(exc.value) == 'Column "invalid" marked for keeping, but not found in source table'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'value', to_index={'invalid' : 'invalid_variable'})
+    assert str(exc.value) == 'Value to index "invalid" not found in index column "category"'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'value', to_index={'some_value' : 'invalid_variable'})
+    assert str(exc.value) == 'Value to index "some_value" not found in index column "category"'
+
+    with pytest.raises(AttributeError) as exc:
+        DataMappingUtils.pivot_table(source, 'category', 'value', to_index={'first' : 'metric'})
+    assert str(exc.value) == 'Index target column name "metric" already existing as column name'
+
+    result = DataMappingUtils.pivot_table(source, 'category', 'value')
+    assert result == [
+        {'first': 'some_value', 'metric': '0.1', 'second': '', 'third': ''},
+        {'first': '42', 'metric': '-1.5', 'second': '', 'third': ''},
+        {'first': '', 'metric': '0.1', 'second': 'some_value', 'third': ''},
+        {'first': '', 'metric': '0.7', 'second': '7', 'third': ''},
+        {'first': '', 'metric': '-1.5', 'second': '', 'third': 'some_value'}
+    ]
+
+    result = DataMappingUtils.pivot_table(source, 'category', 'value',
+                                          to_index={'first' : 'first_target', 'third' : 'third_target'})
+    assert result == [
+        {'first_target': 'some_value', 'metric': '0.1', 'third_target': ''},
+        {'first_target': '42', 'metric': '-1.5', 'third_target': ''},
+        {'first_target': '', 'metric': '-1.5', 'third_target': 'some_value'}
+    ]
+
+    result = DataMappingUtils.pivot_table(source, 'category', 'value', columns_to_keep=[],
+                                          to_index={'first': 'first_target', 'third': 'third_target'})
+    assert result == [
+        {'first_target': 'some_value', 'third_target': ''},
+        {'first_target': '42', 'third_target': ''},
+        {'first_target': '', 'third_target': 'some_value'}
+    ]
+
+
+
 
 if __name__ == '__main__':
     pytest.main()
