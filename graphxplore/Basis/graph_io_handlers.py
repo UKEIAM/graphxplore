@@ -1,4 +1,5 @@
 import collections
+import copy
 import csv
 import json
 import os
@@ -205,29 +206,15 @@ class GraphDatabaseUtils:
         return used_protocol + '://' + host + ':' + str(port)
 
     @staticmethod
-    def _get_neo4j_http_request_body(queries : List[str], query_params : Optional[List[Dict[str, Any]]] = None) -> str:
+    def _get_neo4j_http_request_body(queries : List[str]) -> str:
         """Generates the HTTP request body for a list of Neo4J Cypher queries
 
         :param queries: The Cypher queries
-        :param query_params: The parameters used for the queries, if they are parameterized. Should have the same
-            length as ``queries``, if used. Defaults to ``None``
         :return: Returns the request body
         """
-        if query_params is not None:
-            if len(queries) != len(query_params):
-                raise AttributeError('You must provide parameters for all queries')
-        statements = []
-        for idx in range(len(queries)):
-            statement_entry = {
-                'statement': queries[idx]
-            }
-            if query_params is not None:
-                statement_entry['parameters'] = query_params[idx]
-            statements.append(statement_entry)
         return json.dumps({
-            'statements' : statements
+            'statements': [{'statement' : query} for query in queries]
         })
-
 
     @staticmethod
     def _run_pyodide_neo4j_http_request(request_body: str, database: str, address: str = get_neo4j_address(),
@@ -407,32 +394,44 @@ class GraphDatabaseUtils:
         return records[0]['count']
 
     @staticmethod
-    def get_node_write_cypher_statement(node : Union[BaseNode, AttributeAssociationNode],
-                                        use_create: bool = True) -> Tuple[str, Dict[str, Any]]:
+    def get_node_write_cypher_statement(node : Union[BaseNode, AttributeAssociationNode], separate_params: bool = False,
+                                        use_create: bool = True) -> Union[str, Tuple[str, Dict[str, Any]]]:
         """Generates a Cypher CREATE or MERGE statement to insert a single node into a Neo4J database
 
         :param node: The node to insert
         :param use_create: If ``True``, a CREATE statement is generated, else a MERGE statement
-        :return: Returns the Cypher statement with parameter/value dictionary
+        :param separate_params: If ``True``, a separate dict of parameter/values is generated and parameters are added
+            as variables with a preceding $ character
+        :return: Returns the Cypher statement with or without parameter/value dictionary
         """
         labels, parameters = node.data_for_cypher_write_query()
         query = 'CALL apoc.'
         query += 'create' if use_create else 'merge'
-        query += ('.node($labels, {' + ', '.join((parameter + ': $' + parameter for parameter in parameters))
-                  + '}) YIELD node RETURN id(node) AS id')
-        parameters['labels'] = labels
-        return query, parameters
+        if separate_params:
+            query += ('.node($labels, {' + ', '.join((parameter + ': $' + parameter for parameter in parameters))
+                      + '}) YIELD node RETURN id(node) AS id')
+            parameters['labels'] = labels
+            return query, parameters
+        else:
+            query += ('.node(' + GraphDatabaseUtils.__parameter_to_string_for_query(labels) + ', {'
+                      + ', '.join((param + ': ' + GraphDatabaseUtils.__parameter_to_string_for_query(value)
+                                   for param, value in parameters.items()))
+                      + '}) YIELD node RETURN id(node) AS id')
+            return query
 
     @staticmethod
     def get_edge_write_cypher_statement(edge: Union[BaseEdge, AttributeAssociationEdge],
-                                        node_id_mapping : Dict[int, int]) -> Tuple[str, Dict[str, Any]]:
+                                        node_id_mapping : Dict[int, int],
+                                        separate_params: bool = False) -> Union[str, Tuple[str, Dict[str, Any]]]:
         """Generates a Cypher statement to insert a single edge into a Neo4J database given its edge type and
         parameters. Additionally, the incident nodes are matched prior to the merge by their internal database IDs.
 
         :param edge: The edge to insert
         :param node_id_mapping: A dictionary containing pairs of graphxplore node ID and associated internal node ID of
             the Neo4J database
-        :return: Returns the Cypher statement with parameter/value dictionary
+        :param separate_params: If ``True``, a separate dict of parameter/values is generated and parameters are added
+            as variables with a preceding $ character
+        :return: Returns the Cypher statement with or without parameter/value dictionary
         """
         if edge.source not in node_id_mapping:
             raise AttributeError('Source node ID ' + str(edge.source) + ' not in given dictionary')
@@ -441,14 +440,44 @@ class GraphDatabaseUtils:
             raise AttributeError('Target node ID ' + str(edge.target) + ' not in given dictionary')
         edge_type, parameters = edge.data_for_cypher_write_query()
         node_literals = ['s', 't']
-        query = ' '.join(('MATCH(' + literal + ') WHERE id(' + literal + ')=$id_' + literal for literal in node_literals))
-        query += (' CALL apoc.create.relationship(' + node_literals[0] + ', $edge_type, {'
-                  + ', '.join((parameter + ': $' + parameter for parameter in parameters)) + '}, '
-                  + node_literals[1] + ') YIELD rel RETURN id(rel) as id')
-        parameters['edge_type'] = edge_type
-        parameters['id_' + node_literals[0]] = node_id_mapping[edge.source]
-        parameters['id_' + node_literals[1]] = node_id_mapping[edge.target]
-        return query, parameters
+        if separate_params:
+            query = ' '.join(('MATCH(' + literal + ') WHERE id(' + literal + ')=$id_' + literal
+                              for literal in node_literals))
+            query += (' CALL apoc.create.relationship(' + node_literals[0] + ', $edge_type, {'
+                      + ', '.join((parameter + ': $' + parameter for parameter in parameters)) + '}, '
+                      + node_literals[1] + ') YIELD rel RETURN id(rel) as id')
+            parameters['edge_type'] = edge_type
+            parameters['id_' + node_literals[0]] = node_id_mapping[edge.source]
+            parameters['id_' + node_literals[1]] = node_id_mapping[edge.target]
+            return query, parameters
+        else:
+            query = ' '.join(('MATCH(' + literal + ') WHERE id(' + literal + ')='
+                              + str(node_id_mapping[edge.source if literal == 's' else edge.target])
+                              for literal in node_literals))
+            query += (' CALL apoc.create.relationship(' + node_literals[0] + ', '
+                      + GraphDatabaseUtils.__parameter_to_string_for_query(edge_type) + ', {'
+                      + ', '.join((param + ': ' + GraphDatabaseUtils.__parameter_to_string_for_query(value)
+                                   for param, value in parameters.items())) + '}, '
+                      + node_literals[1] + ') YIELD rel RETURN id(rel) as id')
+            return query
+
+    @staticmethod
+    def __parameter_to_string_for_query(param_value : Any) -> str:
+        """Transforms a parameter value of to string for adding to a Neo4J Cypher statement
+
+        :param param_value: The parameter value to transform to string
+        :return: Returns the result string
+        """
+        if isinstance(param_value, list):
+            clean_list_vals = (GraphDatabaseUtils.__parameter_to_string_for_query(list_val) for list_val in param)
+            return '[' + ', '.join(clean_list_vals) + ']'
+        if isinstance(param_value, str):
+            return "'" + param_value + "'"
+        if isinstance(param_value, float) and math.isnan(param_value):
+            return 'NaN'
+        if isinstance(param_value, float) and math.isinf(param_value):
+            return 'Inf' if param_value > 0 else '-Inf'
+        return str(param_value)
 
 class GraphDatabaseWriter:
     """This class writes nodes and edges, and a whole :class:`Graph` object to a Neo4J database.
@@ -516,7 +545,6 @@ class GraphDatabaseWriter:
         """
         try:
             curr_queries = []
-            curr_params = []
             chunk_size = 10000
             curr_idx = 0
 
@@ -542,16 +570,18 @@ class GraphDatabaseWriter:
                 transaction_id = int(matches[0])
                 for idx in range(curr_idx, curr_end):
                     if write_nodes:
-                        query, params = GraphDatabaseUtils.get_node_write_cypher_statement(objects[idx])
+                        query = GraphDatabaseUtils.get_node_write_cypher_statement(
+                            objects[idx], separate_params=False)
                     else:
-                        query, params = GraphDatabaseUtils.get_edge_write_cypher_statement(objects[idx], node_id_dict)
+                        query = GraphDatabaseUtils.get_edge_write_cypher_statement(
+                            objects[idx], node_id_dict, separate_params=False)
                     curr_queries.append(query)
-                    curr_params.append(params)
-                request_body = GraphDatabaseUtils._get_neo4j_http_request_body(curr_queries, curr_params)
+                request_body = GraphDatabaseUtils._get_neo4j_http_request_body(curr_queries)
                 ok, data = GraphDatabaseUtils._run_pyodide_neo4j_http_request(
                     request_body, self.db_name, self.address, self.auth, transaction_id=transaction_id, commit=False)
 
                 if not ok or len(data['errors']) > 0:
+                    print(request_body)
                     raise AttributeError('Writing graph failed, error was: '
                                          + ': '.join(data['errors'][0].values()))
                 if write_nodes:
@@ -559,7 +589,6 @@ class GraphDatabaseWriter:
                         node_db_ids.append(row['data'][0]['row'][0])
 
                 curr_queries = []
-                curr_params = []
                 curr_idx = curr_end
 
                 # commit batch of objects
@@ -597,7 +626,8 @@ class GraphDatabaseWriter:
                             # combine statements with the same query
                             query_params = collections.defaultdict(list)
                             for node in self.nodes_dict.values():
-                                query, params = GraphDatabaseUtils.get_node_write_cypher_statement(node)
+                                query, params = GraphDatabaseUtils.get_node_write_cypher_statement(
+                                    node, separate_params=True)
                                 query_params[query].append((params, node.node_id))
                             node_id_mapping = {}
                             for query, param_id_batch in query_params.items():
@@ -611,7 +641,8 @@ class GraphDatabaseWriter:
 
                             query_params = collections.defaultdict(list)
                             for edge in self.edges:
-                                query, params = GraphDatabaseUtils.get_edge_write_cypher_statement(edge, node_id_mapping)
+                                query, params = GraphDatabaseUtils.get_edge_write_cypher_statement(
+                                    edge, node_id_mapping, separate_params=True)
                                 query_params[query].append(params)
                             for query, param_batch in query_params.items():
                                 copied_query = query.replace('$', 'entry.')
