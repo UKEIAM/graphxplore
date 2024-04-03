@@ -407,6 +407,7 @@ def get_generator_advanced_options_widget(parent_obj):
             min_cond_prevalence_mode_col.checkbox(
                 'Minimum conditional prevalence applied to all groups',
                 help='Specify if minimum conditional prevalence must be met by all groups or only one',
+                key='min_cond_prevalence_mode_toggle',
                 value=st.session_state.post_filter.min_cond_prevalence_mode == GroupFilterMode.All,
                 on_change=lambda : setattr(st.session_state.post_filter, 'min_cond_prevalence_mode',
                                            (GroupFilterMode.All if st.session_state.min_cond_prevalence_mode_toggle
@@ -422,12 +423,8 @@ def get_generator_advanced_options_widget(parent_obj):
             edge_comp_msg = f"""
                         #### Edge composition
                         - high conditional prevalence: {str(st.session_state.post_filter.edge_comp_ratio[0])}
-                        - high conditional increase 
-                          {'(or decrease)' if st.session_state.post_filter.include_conditional_decrease else ''}
-                          : {str(st.session_state.post_filter.edge_comp_ratio[1])}
-                        - high 
-                          {'(or high inverted)' if st.session_state.post_filter.include_conditional_decrease else ''} 
-                          conditional increase ratio : {str(st.session_state.post_filter.edge_comp_ratio[2])}
+                        - high conditional increase {'(or decrease)' if st.session_state.post_filter.include_conditional_decrease else ''} : {str(st.session_state.post_filter.edge_comp_ratio[1])}
+                        - high {'(or high inverted)' if st.session_state.post_filter.include_conditional_decrease else ''} conditional increase ratio : {str(st.session_state.post_filter.edge_comp_ratio[2])}
                         """
             st.markdown(edge_comp_msg)
 
