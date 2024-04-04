@@ -469,7 +469,7 @@ class GraphDatabaseUtils:
         :return: Returns the result string
         """
         if isinstance(param_value, list):
-            clean_list_vals = (GraphDatabaseUtils.__parameter_to_string_for_query(list_val) for list_val in param)
+            clean_list_vals = (GraphDatabaseUtils.__parameter_to_string_for_query(list_val) for list_val in param_value)
             return '[' + ', '.join(clean_list_vals) + ']'
         if isinstance(param_value, str):
             return "'" + param_value + "'"
