@@ -1514,7 +1514,7 @@ if __name__ == '__main__':
                 parameter_select = param_col.selectbox('Choose metric for ranking', param_options)
                 order_col, min_max_col = st.columns(2)
                 order_select = order_col.radio('Choose ranking order', ['High values first', 'Low values first'])
-                if parameter_select not in ['Prevalence Difference', 'Prevalence Quotient']:
+                if parameter_select not in ['Prevalence Difference', 'Prevalence Ratio']:
                     min_max_select = min_max_col.radio(
                         'Choose min or max group metric for ranking', ['Max', 'Min'],
                         help='For this parameter the node contains a metric for each group separately. Choose which '
