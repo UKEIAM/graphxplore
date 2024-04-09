@@ -278,7 +278,7 @@ class AttributeAssociationGraphGenerator:
                 max_val = max(values)
                 min_val = min(values)
                 node.prevalence_difference = round(max_val - min_val, 5)
-                node.prevalence_ratio = round(max_val/min_val, 5) if min_val > 0 else math.inf
+                node.prevalence_ratio = AttributeAssociationGraphGenerator.__derive_ratio(max_val, min_val)
             node.labels =  self.__derive_node_labels(node)
             self.result_graph.nodes.append(node)
             id_node_dict[node.node_id] = node
@@ -297,9 +297,9 @@ class AttributeAssociationGraphGenerator:
                 group : round(edge.conditional_prevalence[group] - target_node.prevalence[group], 5)
                 for group in edge.groups}
             edge.increase_ratio = {
-                group : round(edge.conditional_prevalence[group]/target_node.prevalence[group], 5)
-                if target_node.prevalence[group] > 0 else math.nan
-                for group in edge.groups}
+                group: AttributeAssociationGraphGenerator.__derive_ratio(
+                    edge.conditional_prevalence[group], target_node.prevalence[group]
+                ) for group in edge.groups}
             edge.edge_type = self.__derive_edge_type(edge)
             self.result_graph.edges.append(edge)
             inverse_edge = AttributeAssociationEdge(source=edge.target, target=edge.source,
@@ -315,9 +315,9 @@ class AttributeAssociationGraphGenerator:
                 group: round(inverse_edge.conditional_prevalence[group] - source_node.prevalence[group], 5)
                 for group in inverse_edge.groups}
             inverse_edge.increase_ratio = {
-                group: round(inverse_edge.conditional_prevalence[group]/source_node.prevalence[group], 5)
-                if source_node.prevalence[group] > 0 else math.nan
-                for group in inverse_edge.groups}
+                group: AttributeAssociationGraphGenerator.__derive_ratio(
+                    inverse_edge.conditional_prevalence[group], source_node.prevalence[group]
+                ) for group in inverse_edge.groups}
             inverse_edge.edge_type = self.__derive_edge_type(inverse_edge)
             self.result_graph.edges.append(inverse_edge)
 
@@ -360,10 +360,31 @@ class AttributeAssociationGraphGenerator:
         :return: Returns the derived type
         """
         abs_score = max([math.fabs(entry) for entry in edge.conditional_increase.values()])
-        rel_score = max([entry if entry >= 1 else 1/entry if entry > 0 else math.inf
+        rel_score = max([entry if entry >= 1 else 1/entry
                          for entry in edge.increase_ratio.values() if not math.isnan(entry)])
         if abs_score < self.cond_increase_thresholds[0] and rel_score < self.increase_ratio_thresholds[0]:
             return AttributeAssociationEdgeType.LOW_RELATION
         if abs_score < self.cond_increase_thresholds[1] and rel_score < self.increase_ratio_thresholds[1]:
             return AttributeAssociationEdgeType.MEDIUM_RELATION
         return AttributeAssociationEdgeType.HIGH_RELATION
+
+    @staticmethod
+    def __derive_ratio(numerator: Union[int, float], denominator: Union[int, float]) -> float:
+        """Calculate the ratio between two numbers. If both are zero, will return 1.0. If only numerator is zero, will
+        return NaN. If only denominator is zero, will return infinity (or - infinity)
+
+        :param numerator: The number to be divided
+        :param denominator: The number that divides ``numerator``
+        :return: Returns the calucated ratio, NaN or  +/- infinity
+        """
+        if numerator != 0 and denominator != 0:
+            return round(numerator/denominator, 5)
+        if numerator == 0:
+            if denominator == 0:
+                return 1.0
+            return math.nan
+        # denominator is 0, numerator is not 0
+        if numerator > 0:
+            return math.inf
+        return -math.inf
+
