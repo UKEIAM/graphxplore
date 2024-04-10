@@ -17,7 +17,7 @@ from graphxplore.DataMapping.Conditionals import (StringOperator, StringOperator
 def test_cypher_queries(neo4j_config):
     run_db_test, neo4j_address, neo4j_auth = neo4j_config
     if not run_db_test:
-        warnings.warn('DashboardBuilder database query tests are not executed. If you want to execute them, '
+        warnings.warn('GroupSelector database query tests are not executed. If you want to execute them, '
                       'set the flag "--run_neo4j_tests" when running pytest to "True"')
         dbms_test = False
     else:
