@@ -49,7 +49,7 @@ jobs:
           NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
           NEO4J_PLUGINS: '["apoc"]'
         options: >-
-          --health-cmd "cypher-shell 'match (n) return count(n)'"
+          --health-cmd "cypher-shell -u neo4j -p mycoolpwd 'match (n) return count(n)'"
           --health-timeout 10s
           --health-retries 20
           --health-interval 10s
