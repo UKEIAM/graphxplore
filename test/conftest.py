@@ -1,5 +1,9 @@
 import pytest
 from typing import Tuple
+import pathlib
+ROOT_DIR = str(pathlib.Path(__file__).parents[1])
+import sys
+sys.path.append(ROOT_DIR)
 from graphxplore.Basis import GraphDatabaseUtils
 
 def port_checker(value):
