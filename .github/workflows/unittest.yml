@@ -1,6 +1,6 @@
 ---
 
-name: Unittest
+name: Unittests
 
 on:
   pull_request:
