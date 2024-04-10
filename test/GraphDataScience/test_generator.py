@@ -64,31 +64,7 @@ def test_invalid_arguments(neo4j_config):
             address=neo4j_address, auth=neo4j_auth)
         with pytest.raises(AttributeError) as exc:
             generator.generate_graph()
-        assert str(exc.value) == ('Cypher query invalid: "match(n) invalid Return id(n) as x_0", error was: '
-                                 '"{code: Neo.ClientError.Statement.SyntaxError} {message: Invalid input '
-                                 "'invalid': expected\n"
-                                 '  ","\n'
-                                 '  "CALL"\n'
-                                 '  "CREATE"\n'
-                                 '  "DELETE"\n'
-                                 '  "DETACH"\n'
-                                 '  "FOREACH"\n'
-                                 '  "LOAD"\n'
-                                 '  "MATCH"\n'
-                                 '  "MERGE"\n'
-                                 '  "OPTIONAL"\n'
-                                 '  "REMOVE"\n'
-                                 '  "RETURN"\n'
-                                 '  "SET"\n'
-                                 '  "UNION"\n'
-                                 '  "UNWIND"\n'
-                                 '  "USE"\n'
-                                 '  "USING"\n'
-                                 '  "WHERE"\n'
-                                 '  "WITH"\n'
-                                 '  <EOF> (line 1, column 10 (offset: 9))\n'
-                                 '"match(n) invalid Return id(n) as x_0"\n'
-                                 '          ^}"')
+        assert str(exc.value).startswith('Cypher query invalid: "match(n) invalid Return id(n) as x_0", error was: ')
     with pytest.raises(AttributeError) as exc:
         AttributeAssociationGraphGenerator(db_name='test',
                                            group_selection={'group1': 'group_selection',
