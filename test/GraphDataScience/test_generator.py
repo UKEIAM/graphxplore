@@ -7,26 +7,26 @@ import warnings
 ROOT_DIR = str(pathlib.Path(__file__).parents[2])
 import sys
 sys.path.append(ROOT_DIR)
-TEST_DIR = os.path.join(ROOT_DIR, 'test')
-sys.path.append(TEST_DIR)
 from graphxplore.GraphDataScience import AttributeAssociationGraphGenerator
 from graphxplore.Basis import GraphCSVWriter, GraphDatabaseWriter, GraphType, GraphDatabaseUtils
 from graphxplore.Basis.BaseGraph import BaseNodeType
 from graphxplore.Basis.AttributeAssociationGraph import AttributeAssociationNode, AttributeAssociationLabels
-import neo4j_test_config
 
-def test_invalid_arguments():
-    if not neo4j_test_config.RUN_DB_TESTS:
-        warnings.warn('AttributeAssociationGraphGenerator database tests are not executed. If you want '
-                      'to execute them, set the flag "RUN_DB_TESTS" in "test/neo4j_test_config.py"')
+def test_invalid_arguments(neo4j_config):
+    run_db_test, neo4j_address, neo4j_auth = neo4j_config
+    if not run_db_test:
+        warnings.warn('DashboardBuilder database query tests are not executed. If you want to execute them, '
+                      'set the flag "--run_neo4j_tests" when running pytest to "True"')
         dbms_test = False
     else:
-        if not neo4j_test_config.test_connectivity():
-            dbms_test = False
-            pytest.fail('Neo4J DBMS for testing not available under given configuration. Check "test/neo4j_test_config.py"')
-        else:
+        try:
+            GraphDatabaseUtils.test_connection(neo4j_address, neo4j_auth)
             dbms_test = True
-
+        except AttributeError:
+            dbms_test = False
+            pytest.fail(
+                'Neo4J DBMS for testing not available under given configuration. Adjust parameters "--neo4j_host",'
+                ' "--neo4j_port", "--neo4j_user" and/or "--neo4j_pwd"')
     if dbms_test:
         generator = AttributeAssociationGraphGenerator(db_name='invalid', group_selection={'group' : 'group_selection'},
                                                        address='invald://invalid')
@@ -35,37 +35,33 @@ def test_invalid_arguments():
         assert str(exc.value) == ('Could not connect to Neo4J DBMS under address "invald://invalid" with given '
                                   'credentials')
         generator = AttributeAssociationGraphGenerator(db_name='test', group_selection={'group': 'group_selection'},
-                                                       address=neo4j_test_config.get_neo4j_address(),
+                                                       address=neo4j_address,
                                                        auth=('invalid', 'invalid'))
         with pytest.raises(AttributeError) as exc:
             generator.generate_graph()
         assert str(exc.value) == ('Could not connect to Neo4J DBMS under address "'
-                                  + neo4j_test_config.get_neo4j_address() + '" with given credentials')
+                                  + neo4j_address + '" with given credentials')
         generator = AttributeAssociationGraphGenerator(db_name='invalid', group_selection={'group': 'group_selection'},
-                                                       address=neo4j_test_config.get_neo4j_address(),
-                                                       auth=neo4j_test_config.NEO4J_AUTH)
+                                                       address=neo4j_address, auth=neo4j_auth)
         with pytest.raises(AttributeError) as exc:
             generator.generate_graph()
-        assert str(exc.value) == ('Database "invalid" does not exist under address "'
-                                  + neo4j_test_config.get_neo4j_address() + '"')
+        assert str(exc.value) == 'Database "invalid" does not exist under address "' + neo4j_address + '"'
 
         # it is assumed that the database "test" was already created via the "test_graph_translator.py" test script
         generator = AttributeAssociationGraphGenerator(db_name='test', group_selection={'group': 'group_selection'},
-                                                       address=neo4j_test_config.get_neo4j_address(),
-                                                       auth=neo4j_test_config.NEO4J_AUTH)
+                                                       address=neo4j_address, auth=neo4j_auth)
         with pytest.raises(AttributeError) as exc:
             generator.generate_graph()
         assert str(exc.value) == 'Cypher query must use "x_0" as variable for the node ID of group primary keys'
         generator = AttributeAssociationGraphGenerator(db_name='test', group_selection={'group': 'match(x_0)'},
-                                                       address=neo4j_test_config.get_neo4j_address(),
-                                                       auth=neo4j_test_config.NEO4J_AUTH)
+                                                       address=neo4j_address, auth=neo4j_auth)
         with pytest.raises(AttributeError) as exc:
             generator.generate_graph()
         assert str(exc.value) == 'Cypher query must end with "return id(<node variable>) as x_0"'
 
         generator = AttributeAssociationGraphGenerator(
             db_name='test', group_selection={'group': 'match(n) invalid Return id(n) as x_0'},
-            address=neo4j_test_config.get_neo4j_address(), auth=neo4j_test_config.NEO4J_AUTH)
+            address=neo4j_address, auth=neo4j_auth)
         with pytest.raises(AttributeError) as exc:
             generator.generate_graph()
         assert str(exc.value) == ('Cypher query invalid: "match(n) invalid Return id(n) as x_0", error was: '
@@ -127,7 +123,7 @@ def test_invalid_arguments():
                                            increase_ratio_thresholds=(2.0,0.1))
     assert str(exc.value) == 'Conditional increase ratio thresholds must be larger or equal to 1'
 
-def test_scores_and_write_with_one_group():
+def test_scores_and_write_with_one_group(neo4j_config):
     generator = AttributeAssociationGraphGenerator(db_name='test',
                                                    group_selection={'group1': 'group_selection'})
     generator.group_sizes = {'group1': 10}
@@ -152,7 +148,7 @@ def test_scores_and_write_with_one_group():
 
     graph = generator.result_graph
 
-    out_dir = os.path.join(TEST_DIR, 'GraphDataScience', 'test_output', 'generator')
+    out_dir = os.path.join(ROOT_DIR, 'test', 'GraphDataScience', 'test_output', 'generator')
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -216,26 +212,34 @@ def test_scores_and_write_with_one_group():
                      ['2', '1', 'HIGH_RELATION', 'group1 (10)', '1', '0.25', '-0.30556', '0.45']]
         assert actual == expected
 
-    if neo4j_test_config.RUN_DB_TESTS and neo4j_test_config.test_connectivity():
-        address = neo4j_test_config.get_neo4j_address()
+    run_db_test, neo4j_address, neo4j_auth = neo4j_config
 
-        GraphDatabaseWriter.write_graph('test', graph, overwrite=True, address=address,
-                                        auth=neo4j_test_config.NEO4J_AUTH)
+    if run_db_test:
+        try:
+            GraphDatabaseUtils.test_connection(neo4j_address, neo4j_auth)
+            dbms_test = True
+        except AttributeError:
+            dbms_test = False
+            pytest.fail(
+                'Neo4J DBMS for testing not available under given configuration. Adjust parameters "--neo4j_host",'
+                ' "--neo4j_port", "--neo4j_user" and/or "--neo4j_pwd"')
 
-        assert GraphDatabaseUtils.check_graph_type_of_db(
-            'test', address=address, auth=neo4j_test_config.NEO4J_AUTH) == GraphType.AttributeAssociation
+        if dbms_test:
+            GraphDatabaseWriter.write_graph('test', graph, overwrite=True, address=neo4j_address, auth=neo4j_auth)
 
-        assert GraphDatabaseUtils.get_nof_edges_in_database(
-            'test', address=address, auth=neo4j_test_config.NEO4J_AUTH) == 2
+            assert GraphDatabaseUtils.check_graph_type_of_db(
+                'test', address=neo4j_address, auth=neo4j_auth) == GraphType.AttributeAssociation
 
-        query = 'MATCH (n) RETURN count(n) as count'
-        result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-        assert result[0]['count'] == 2
-        query = 'MATCH (n:Attribute {value:"val2"}) RETURN n.prevalence_ratio as ratio'
-        result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-        assert math.isnan(result[0]['ratio'])
+            assert GraphDatabaseUtils.get_nof_edges_in_database('test', address=neo4j_address, auth=neo4j_auth) == 2
 
-def test_score_calculation_and_write():
+            query = 'MATCH (n) RETURN count(n) as count'
+            result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+            assert result[0]['count'] == 2
+            query = 'MATCH (n:Attribute {value:"val2"}) RETURN n.prevalence_ratio as ratio'
+            result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+            assert math.isnan(result[0]['ratio'])
+
+def test_score_calculation_and_write(neo4j_config):
     generator = AttributeAssociationGraphGenerator(db_name='test',
                                                    group_selection={'group1' : 'group_selection',
                                                                     'group2' : 'group_selection'},
@@ -280,7 +284,7 @@ def test_score_calculation_and_write():
 
     graph = generator.result_graph
 
-    out_dir = os.path.join(TEST_DIR, 'GraphDataScience', 'test_output', 'generator')
+    out_dir = os.path.join(ROOT_DIR, 'test', 'GraphDataScience', 'test_output', 'generator')
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -450,27 +454,35 @@ def test_score_calculation_and_write():
                       '1.42857;0.83333']]
         assert actual == expected
 
-    if neo4j_test_config.RUN_DB_TESTS and neo4j_test_config.test_connectivity():
-        address = neo4j_test_config.get_neo4j_address()
+    run_db_test, neo4j_address, neo4j_auth = neo4j_config
 
-        GraphDatabaseWriter.write_graph('test', graph, overwrite=True, address=address,
-                                        auth=neo4j_test_config.NEO4J_AUTH)
+    if run_db_test:
+        try:
+            GraphDatabaseUtils.test_connection(neo4j_address, neo4j_auth)
+            dbms_test = True
+        except AttributeError:
+            dbms_test = False
+            pytest.fail(
+                'Neo4J DBMS for testing not available under given configuration. Adjust parameters "--neo4j_host",'
+                ' "--neo4j_port", "--neo4j_user" and/or "--neo4j_pwd"')
 
-        assert GraphDatabaseUtils.check_graph_type_of_db(
-            'test', address=address, auth=neo4j_test_config.NEO4J_AUTH) == GraphType.AttributeAssociation
+        if dbms_test:
+            GraphDatabaseWriter.write_graph('test', graph, overwrite=True, address=neo4j_address, auth=neo4j_auth)
 
-        assert GraphDatabaseUtils.get_nof_edges_in_database(
-            'test', address=address, auth=neo4j_test_config.NEO4J_AUTH) == 8
+            assert GraphDatabaseUtils.check_graph_type_of_db(
+                'test', address=neo4j_address, auth=neo4j_auth) == GraphType.AttributeAssociation
 
-        query = 'MATCH (n) RETURN count(n) as count'
-        result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-        assert result[0]['count'] == 6
-        query = 'MATCH (n:Attribute {value:"val2"}) RETURN n.prevalence_ratio as ratio'
-        result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-        assert result[0]['ratio'] == 2.25002
-        query = 'MATCH (n:Attribute {value:"val4"}) RETURN n.prevalence_ratio as ratio'
-        result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-        assert result[0]['ratio'] == math.inf
+            assert GraphDatabaseUtils.get_nof_edges_in_database('test', address=neo4j_address, auth=neo4j_auth) == 8
+
+            query = 'MATCH (n) RETURN count(n) as count'
+            result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+            assert result[0]['count'] == 6
+            query = 'MATCH (n:Attribute {value:"val2"}) RETURN n.prevalence_ratio as ratio'
+            result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+            assert result[0]['ratio'] == 2.25002
+            query = 'MATCH (n:Attribute {value:"val4"}) RETURN n.prevalence_ratio as ratio'
+            result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+            assert result[0]['ratio'] == math.inf
 
 if __name__ == '__main__':
     pytest.main()

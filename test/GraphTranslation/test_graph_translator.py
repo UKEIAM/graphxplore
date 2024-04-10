@@ -9,14 +9,11 @@ sys.path.append(ROOT_DIR)
 from graphxplore.MetaDataHandling import MetaData
 from graphxplore.GraphTranslation import GraphTranslator
 from graphxplore.Basis import GraphCSVReader, GraphDatabaseWriter, GraphType, GraphDatabaseUtils
-TEST_DIR = os.path.join(ROOT_DIR, 'test')
-sys.path.append(TEST_DIR)
-import neo4j_test_config
 
-def test_graph_generation():
-    data_dir = os.path.join(TEST_DIR, 'GraphTranslation', 'test_data')
-    out_dir = os.path.join(TEST_DIR, 'GraphTranslation', 'test_output')
-    meta_path = os.path.join(TEST_DIR, 'MetaDataHandling', 'test_output', 'meta.json')
+def test_graph_generation(neo4j_config):
+    data_dir = os.path.join(ROOT_DIR, 'test', 'GraphTranslation', 'test_data')
+    out_dir = os.path.join(ROOT_DIR, 'test', 'GraphTranslation', 'test_output')
+    meta_path = os.path.join(ROOT_DIR, 'test', 'MetaDataHandling', 'test_output', 'meta.json')
     meta = MetaData.load_from_json(meta_path)
     graph_translator = GraphTranslator(meta)
     graph_translator.transform_to_graph(data_dir, out_dir)
@@ -171,38 +168,41 @@ def test_graph_generation():
         reloaded_data_from_dict['Edge'].append(string_row)
     assert reloaded_data == reloaded_data_from_dict
 
-    if not neo4j_test_config.RUN_DB_TESTS:
+    run_db_test, neo4j_address, neo4j_auth = neo4j_config
+
+    if not run_db_test:
         warnings.warn('GraphTranslation database query tests are not executed. If you want to execute them, '
-                      'set the flag "RUN_DB_TESTS" in "test/neo4j_test_config.py"')
+                      'set the flag "--run_neo4j_tests" when running pytest to "True"')
     else:
 
-        if not neo4j_test_config.test_connectivity():
-            pytest.fail('Neo4J DBMS for testing not available under given configuration. Check "test/neo4j_test_config.py"')
-        else:
-            address = neo4j_test_config.get_neo4j_address()
-            GraphDatabaseWriter.write_graph('test', reloaded_graph, overwrite=True, address=address,
-                                            auth=neo4j_test_config.NEO4J_AUTH)
+        try:
+            GraphDatabaseUtils.test_connection(neo4j_address, neo4j_auth)
+        except AttributeError:
+            pytest.fail(
+                'Neo4J DBMS for testing not available under given configuration. Adjust parameters "--neo4j_host",'
+                ' "--neo4j_port", "--neo4j_user" and/or "--neo4j_pwd"')
 
-            assert GraphDatabaseUtils.check_graph_type_of_db('test', address=address,
-                                                             auth=neo4j_test_config.NEO4J_AUTH) == GraphType.Base
+        GraphDatabaseWriter.write_graph(
+            'test', reloaded_graph, overwrite=True, address=neo4j_address, auth=neo4j_auth)
 
-            assert GraphDatabaseUtils.database_contains_labels('test', meta.get_table_names(), address=address,
-                                                               auth=neo4j_test_config.NEO4J_AUTH)
+        assert GraphDatabaseUtils.check_graph_type_of_db(
+            'test', address=neo4j_address, auth=neo4j_auth) == GraphType.Base
 
-            assert not GraphDatabaseUtils.database_contains_labels('test', meta.get_table_names() + ['invalid'],
-                                                                   address=address,
-                                                                   auth=neo4j_test_config.NEO4J_AUTH)
+        assert GraphDatabaseUtils.database_contains_labels(
+            'test', meta.get_table_names(), address=neo4j_address, auth=neo4j_auth)
 
-            assert GraphDatabaseUtils.get_nof_edges_in_database('test', address=address,
-                                                                auth=neo4j_test_config.NEO4J_AUTH) == 25
+        assert not GraphDatabaseUtils.database_contains_labels('test', meta.get_table_names() + ['invalid'],
+                                                               address=neo4j_address, auth=neo4j_auth)
 
-            query = 'MATCH (n) RETURN count(n) as count'
-            result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-            assert result[0]['count'] == 25
+        assert GraphDatabaseUtils.get_nof_edges_in_database('test', address=neo4j_address, auth=neo4j_auth) == 25
 
-            query = 'MATCH (n {name:"FLOAT_ATTR", value:"normal"}) RETURN n.refRange as range'
-            result = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
-            assert result[0]['range'] == [0.0, 0.5]
+        query = 'MATCH (n) RETURN count(n) as count'
+        result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+        assert result[0]['count'] == 25
+
+        query = 'MATCH (n {name:"FLOAT_ATTR", value:"normal"}) RETURN n.refRange as range'
+        result = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
+        assert result[0]['range'] == [0.0, 0.5]
 
 if __name__ == '__main__':
     pytest.main()

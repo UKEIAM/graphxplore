@@ -5,8 +5,6 @@ import warnings
 ROOT_DIR = str(pathlib.Path(__file__).parents[2])
 import sys
 sys.path.append(ROOT_DIR)
-TEST_DIR = os.path.join(ROOT_DIR, 'test')
-sys.path.append(TEST_DIR)
 from graphxplore.Basis import GraphOutputType, GraphDatabaseUtils
 from graphxplore.MetaDataHandling import MetaDataGenerator, DataType
 from graphxplore.GraphTranslation import GraphTranslator
@@ -15,35 +13,37 @@ from graphxplore.DataMapping import AggregatorType
 from graphxplore.DataMapping.Conditionals import (StringOperator, StringOperatorType, AlwaysTrueOperator,
                                                   MetricOperatorType, MetricOperator, AggregatorOperator,
                                                   AndOperator, OrOperator, NegatedOperator)
-import neo4j_test_config
 
-def test_cypher_queries():
-    if not neo4j_test_config.RUN_DB_TESTS:
-        warnings.warn('GroupSelector database query tests are not executed. If you want to execute them, '
-                      'set the flag "RUN_DB_TESTS" in "test/neo4j_test_config.py"')
+def test_cypher_queries(neo4j_config):
+    run_db_test, neo4j_address, neo4j_auth = neo4j_config
+    if not run_db_test:
+        warnings.warn('DashboardBuilder database query tests are not executed. If you want to execute them, '
+                      'set the flag "--run_neo4j_tests" when running pytest to "True"')
         dbms_test = False
     else:
-        if not neo4j_test_config.test_connectivity():
-            dbms_test = False
-            pytest.fail('Neo4J DBMS for testing not available under given configuration. Check "test/neo4j_test_config.py"')
-        else:
+        try:
+            GraphDatabaseUtils.test_connection(neo4j_address, neo4j_auth)
             dbms_test = True
-    address = neo4j_test_config.get_neo4j_address()
-    csv_dir = os.path.join(TEST_DIR, 'GraphDataScience', 'test_data', 'group_selector')
+        except AttributeError:
+            dbms_test = False
+            pytest.fail(
+                'Neo4J DBMS for testing not available under given configuration. Adjust parameters "--neo4j_host",'
+                ' "--neo4j_port", "--neo4j_user" and/or "--neo4j_pwd"')
+    csv_dir = os.path.join(ROOT_DIR, 'test', 'GraphDataScience', 'test_data', 'group_selector')
     meta_gen = MetaDataGenerator(csv_dir)
     meta = meta_gen.gather_meta_data()
     graph_translator = GraphTranslator(meta)
     if dbms_test:
         graph_translator.transform_to_graph(csv_dir, 'test', GraphOutputType.Database, overwrite=True,
-                                            address=address, auth=neo4j_test_config.NEO4J_AUTH)
+                                            address=neo4j_address, auth=neo4j_auth)
     selector = GroupSelector('root', meta)
     query = selector.get_cypher_query()
     assert query == 'match (x_0:root {name:"root_pk"}) where x_0:Key\nwith x_0\nreturn id(x_0) as x_0'
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 3
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert sorted([entry['value'] for entry in cursor]) == [0,1,2]
 
     # test check in single child table
@@ -58,11 +58,11 @@ def test_cypher_queries():
         'where y_0.value>0\n'
         'return id(x_0) as x_0')
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 1
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(
             str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert [entry['value'] for entry in cursor] == [0]
 
     # test multiple children
@@ -93,15 +93,16 @@ def test_cypher_queries():
         '(y_3.value="good bye") and (y_4.value>-1000) and (y_5.value contains "o")\n'
         'return id(x_0) as x_0')
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 2
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(
             str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert sorted([entry['value'] for entry in cursor]) == [0, 1]
 
     # test aggregation
-    selector = GroupSelector('first_child', meta, AggregatorOperator('root', 'root_str', 2, DataType.String, AggregatorType.Count, MetricOperatorType.Equals))
+    selector = GroupSelector('first_child', meta, AggregatorOperator('root', 'root_str', 2, DataType.String,
+                                                                     AggregatorType.Count, MetricOperatorType.Equals))
     query = selector.get_cypher_query()
     assert query == (
         'match (x_0:first_child {name:"first_child_pk"}) where x_0:Key\n'
@@ -111,11 +112,11 @@ def test_cypher_queries():
         'where z_0=2\n'
         'return id(x_0) as x_0')
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 1
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(
             str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert [entry['value'] for entry in cursor] == [1]
 
     # combine single value and aggregation
@@ -148,11 +149,11 @@ def test_cypher_queries():
         '((y_1.value>0) or (not (y_2.value contains "n")))\n'
         'return id(x_0) as x_0')
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 1
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(
             str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert [entry['value'] for entry in cursor] == [0]
 
     # test all primary keys
@@ -160,11 +161,11 @@ def test_cypher_queries():
     query = selector.get_cypher_query()
     assert query == 'match (x_0:root {name:"root_pk"}) where x_0:Key\nwith x_0\nreturn id(x_0) as x_0'
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 3
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(
             str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert sorted([entry['value'] for entry in cursor]) == [0, 1, 2]
 
     # test primary key conditions
@@ -178,15 +179,15 @@ def test_cypher_queries():
                      'where (x_0.value=0) and (x_1.value=0)\n'
                      'return id(x_0) as x_0')
     if dbms_test:
-        cursor = GraphDatabaseUtils.execute_query(query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert len(cursor) == 1
         value_query = 'MATCH(n) WHERE id(n) IN [' + ', '.join(
             str(entry['x_0']) for entry in cursor) + '] RETURN n.value as value'
-        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address, neo4j_test_config.NEO4J_AUTH)
+        cursor = GraphDatabaseUtils.execute_query(value_query, 'test', address=neo4j_address, auth=neo4j_auth)
         assert sorted([entry['value'] for entry in cursor]) == [0]
 
 def test_exception_handling():
-    csv_dir = os.path.join(TEST_DIR, 'GraphDataScience', 'test_data', 'group_selector')
+    csv_dir = os.path.join(ROOT_DIR, 'test', 'GraphDataScience', 'test_data', 'group_selector')
     meta_gen = MetaDataGenerator(csv_dir)
     meta = meta_gen.gather_meta_data()
     with pytest.raises(AttributeError) as exc:
