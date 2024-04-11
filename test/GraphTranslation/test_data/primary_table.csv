@@ -1,0 +1,5 @@
+ROW_ID,PRIMARY,STRING_ATTR,FLOAT_ATTR,MIXED_ATTR
+0,1,"Text",0.5,"Text"
+1,2,"AnotherText
+MoreText",0.5,0.2
+2,3,TextWithoutQuotes,1.0,2

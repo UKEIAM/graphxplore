@@ -1,0 +1,12 @@
+:ID,:LABEL,name,value:long,description
+1,primary_table;Key,PRIMARY,1,primary key
+2,primary_table;Attribute,ROW_ID,0,irrelevant index
+5,primary_table;Key,PRIMARY,2,primary key
+6,primary_table;Attribute,ROW_ID,1,irrelevant index
+9,primary_table;Key,PRIMARY,3,primary key
+10,primary_table;Attribute,ROW_ID,2,irrelevant index
+16,secondary_table;Key,OWN_PRIMARY,0,primary key
+19,secondary_table;Key,OWN_PRIMARY,1,primary key
+22,secondary_table;Key,OWN_PRIMARY,2,primary key
+24,primary_table;Key,PRIMARY,0,primary key
+25,secondary_table;Key,OWN_PRIMARY,3,primary key

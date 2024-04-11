@@ -1,0 +1,7 @@
+:ID,:LABEL,name,value,description
+3,primary_table;Attribute,STRING_ATTR,Text,contains text
+7,primary_table;Attribute,STRING_ATTR,"AnotherText
+MoreText",contains text
+11,primary_table;Attribute,STRING_ATTR,TextWithoutQuotes,contains text
+17,secondary_table;Attribute,ATTR_WITH_EMPTY,default value,weird variable
+20,secondary_table;Attribute,ATTR_WITH_EMPTY,NotEmpty,weird variable

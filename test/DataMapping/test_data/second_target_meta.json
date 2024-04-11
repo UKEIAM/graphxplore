@@ -1,0 +1,130 @@
+{
+      "root": {
+            "label": "Root",
+            "primary_key": "NEW_PK",
+            "foreign_keys": {
+                  "PK_CHILD": "child"
+            },
+            "variables": {
+                  "NEW_PK": {
+                        "name": "NEW_PK",
+                        "table": "root",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "ORIGIN_PK_1": {
+                        "name": "ORIGIN_PK_1",
+                        "table": "root",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "ORIGIN_PK_2": {
+                        "name": "ORIGIN_PK_2",
+                        "table": "root",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "PK_CHILD": {
+                        "name": "PK_CHILD",
+                        "table": "root",
+                        "labels": [],
+                        "variable_type": "ForeignKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "ATTR1": {
+                        "name": "ATTR1",
+                        "table": "root",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "String",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "ATTR2": {
+                        "name": "ATTR2",
+                        "table": "root",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "Decimal",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  }
+            }
+      },
+      "child": {
+            "label": "Child",
+            "primary_key": "PK_CHILD",
+            "foreign_keys": {},
+            "variables": {
+                  "PK_CHILD": {
+                        "name": "PK_CHILD",
+                        "table": "child",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "ATTR": {
+                        "name": "ATTR",
+                        "table": "child",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "String",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  }
+            }
+      }
+}

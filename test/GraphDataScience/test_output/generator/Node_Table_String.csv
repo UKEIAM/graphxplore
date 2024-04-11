@@ -1,0 +1,7 @@
+:ID,:LABEL,name,value,description,groups[],count:long[],missing:double[],prevalence:double[],prevalence_difference:double,prevalence_ratio:double
+1,Test;Attribute;HighlyRelated;HighlyFrequent,SomeAttr,val1,NaN,group1 (10)[+];group2 (8)[-],5;1,0.1;0.0,0.55556;0.125,0.43056,4.44448
+2,Test;Attribute;HighlyInverse;HighlyFrequent,SomeAttr,val2,NaN,group1 (10)[+];group2 (8)[-],4;8,0.1;0.0,0.44444;1.0,0.55556,2.25002
+3,Test;Attribute;Unrelated;HighlyFrequent,OtherAttr,val3,NaN,group1 (10)[+];group2 (8)[-],8;8,0.2;0.0,1.0;1.0,0.0,1.0
+4,Test;Attribute;HighlyInverse;Frequent,OtherAttr,val4,NaN,group1 (10)[+];group2 (8)[-],0;3,0.2;0.0,0.0;0.375,0.375,inf
+5,Test;Attribute;HighlyInverse;HighlyFrequent,AnotherAttr,val5,NaN,group1 (10)[+];group2 (8)[-],6;7,0.0;0.125,0.6;1.0,0.4,1.66667
+6,Test;Attribute;Inverse;HighlyFrequent,AnotherAttr,val6,NaN,group1 (10)[+];group2 (8)[-],7;6,0.0;0.125,0.7;0.85714,0.15714,1.22449

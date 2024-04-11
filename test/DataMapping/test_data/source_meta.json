@@ -1,0 +1,374 @@
+{
+      "first_child_table": {
+            "foreign_keys": {
+                  "PK_CHILD_3": "third_child_table"
+            },
+            "label": "first_child_table",
+            "primary_key": "PK_CHILD_1",
+            "variables": {
+                  "ATTR": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Decimal",
+                        "data_type_distribution": {
+                              "Decimal": 1.0,
+                              "Integer": 0.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "ATTR",
+                        "table": "first_child_table",
+                        "value_distribution": null,
+                        "variable_type": "Categorical"
+                  },
+                  "PK_CHILD_1": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_1",
+                        "table": "first_child_table",
+                        "value_distribution": null,
+                        "variable_type": "PrimaryKey"
+                  },
+                  "PK_CHILD_3": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_3",
+                        "table": "first_child_table",
+                        "value_distribution": null,
+                        "variable_type": "ForeignKey"
+                  }
+            }
+      },
+      "first_root_table": {
+            "foreign_keys": {
+                  "PK_CHILD_1": "first_child_table",
+                  "PK_CHILD_2": "second_child_table"
+            },
+            "label": "first_root_table",
+            "primary_key": "PK_ROOT_1",
+            "variables": {
+                  "ATTR1": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "String",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 0.0,
+                              "String": 1.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "ATTR1",
+                        "table": "first_root_table",
+                        "value_distribution": null,
+                        "variable_type": "Categorical"
+                  },
+                  "ATTR2": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "ATTR2",
+                        "table": "first_root_table",
+                        "value_distribution": null,
+                        "variable_type": "Categorical"
+                  },
+                  "PK_CHILD_1": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_1",
+                        "table": "first_root_table",
+                        "value_distribution": null,
+                        "variable_type": "ForeignKey"
+                  },
+                  "PK_CHILD_2": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_2",
+                        "table": "first_root_table",
+                        "value_distribution": null,
+                        "variable_type": "ForeignKey"
+                  },
+                  "PK_ROOT_1": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_ROOT_1",
+                        "table": "first_root_table",
+                        "value_distribution": null,
+                        "variable_type": "PrimaryKey"
+                  }
+            }
+      },
+      "second_child_table": {
+            "foreign_keys": {},
+            "label": "second_child_table",
+            "primary_key": "PK_CHILD_2",
+            "variables": {
+                  "ATTR": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "String",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 0.0,
+                              "String": 1.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "ATTR",
+                        "table": "second_child_table",
+                        "value_distribution": null,
+                        "variable_type": "Categorical"
+                  },
+                  "PK_CHILD_2": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_2",
+                        "table": "second_child_table",
+                        "value_distribution": null,
+                        "variable_type": "PrimaryKey"
+                  }
+            }
+      },
+      "second_root_table": {
+            "foreign_keys": {
+                  "PK_CHILD_1": "first_child_table"
+            },
+            "label": "second_root_table",
+            "primary_key": "PK_ROOT_1",
+            "variables": {
+                  "ATTR": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Decimal",
+                        "data_type_distribution": {
+                              "Decimal": 1.0,
+                              "Integer": 0.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "ATTR",
+                        "table": "second_root_table",
+                        "value_distribution": null,
+                        "variable_type": "Categorical"
+                  },
+                  "PK_CHILD_1": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_1",
+                        "table": "second_root_table",
+                        "value_distribution": null,
+                        "variable_type": "ForeignKey"
+                  },
+                  "PK_ROOT_1": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_ROOT_1",
+                        "table": "second_root_table",
+                        "value_distribution": null,
+                        "variable_type": "PrimaryKey"
+                  }
+            }
+      },
+      "third_child_table": {
+            "foreign_keys": {},
+            "label": "third_child_table",
+            "primary_key": "PK_CHILD_3",
+            "variables": {
+                  "ATTR": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Decimal",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "ATTR",
+                        "table": "third_child_table",
+                        "value_distribution": null,
+                        "variable_type": "Categorical"
+                  },
+                  "PK_CHILD_3": {
+                        "artifacts": null,
+                        "binning": {
+                              "exclude_from_binning": null,
+                              "ref_high": null,
+                              "ref_low": null,
+                              "should_bin": false
+                        },
+                        "data_type": "Integer",
+                        "data_type_distribution": {
+                              "Decimal": 0.0,
+                              "Integer": 1.0,
+                              "String": 0.0
+                        },
+                        "default_value": null,
+                        "description": null,
+                        "labels": [],
+                        "name": "PK_CHILD_3",
+                        "table": "third_child_table",
+                        "value_distribution": null,
+                        "variable_type": "PrimaryKey"
+                  }
+            }
+      }
+}

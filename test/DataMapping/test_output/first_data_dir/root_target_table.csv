@@ -1,0 +1,4 @@
+Primary,PKT_CHILD1,PKT_CHILD2,CopyStrAttr
+0,0,0,wasMissing
+1,1,1,SomeText
+2,0,0,AnotherText

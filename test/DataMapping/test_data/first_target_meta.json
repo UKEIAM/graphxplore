@@ -1,0 +1,138 @@
+{
+      "root_target_table": {
+            "label": "Root",
+            "primary_key": "Primary",
+            "foreign_keys": {
+                  "PKT_CHILD1": "first_child_target_table",
+                  "PKT_CHILD2": "second_child_target_table"
+            },
+            "variables": {
+                  "Primary": {
+                        "name": "Primary",
+                        "table": "root_target_table",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "PKT_CHILD1": {
+                        "name": "PKT_CHILD1",
+                        "table": "root_target_table",
+                        "labels": [],
+                        "variable_type": "ForeignKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "PKT_CHILD2": {
+                        "name": "PKT_CHILD2",
+                        "table": "root_target_table",
+                        "labels": [],
+                        "variable_type": "ForeignKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "CopyStrAttr": {
+                        "name": "CopyStrAttr",
+                        "table": "root_target_table",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "String",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  }
+            }
+      },
+      "first_child_target_table": {
+            "label": "FirstChild",
+            "primary_key": "PKT_CHILD1",
+            "foreign_keys": {},
+            "variables": {
+                  "PKT_CHILD1": {
+                        "name": "PKT_CHILD1",
+                        "table": "first_child_target_table",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "FLOAT_ATTR": {
+                        "name": "FLOAT_ATTR",
+                        "table": "first_child_target_table",
+                        "labels": [],
+                        "variable_type": "Metric",
+                        "data_type": "Decimal",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  }
+            }
+      },
+      "second_child_target_table": {
+            "label": "SecondChild",
+            "primary_key": "PKT_CHILD2",
+            "foreign_keys": {},
+            "variables": {
+                  "PKT_CHILD2": {
+                        "name": "PKT_CHILD2",
+                        "table": "second_child_target_table",
+                        "labels": [],
+                        "variable_type": "PrimaryKey",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  },
+                  "INT_ATTR": {
+                        "name": "INT_ATTR",
+                        "table": "second_child_target_table",
+                        "labels": [],
+                        "variable_type": "Categorical",
+                        "data_type": "Integer",
+                        "description": null,
+                        "data_type_distribution": null,
+                        "default_value": null,
+                        "value_distribution": null,
+                        "binning": null,
+                        "artifacts": null,
+                        "reviewed": null
+                  }
+            }
+      }
+}

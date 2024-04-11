@@ -1,0 +1,4 @@
+root_pk,root_str,root_int,first_child_pk,second_child_pk
+0,someWord,42,0,1
+1,"some other word",13,1,1
+2,someWord,100,1,0

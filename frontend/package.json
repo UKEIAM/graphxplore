@@ -1,0 +1,34 @@
+{
+  "name": "GraphXplore",
+  "version": "0.9.0",
+  "author": "Louis Bellmann",
+  "description": "A tool for meta data extraction, data cleaning, visual exploration using graphs and dashboards",
+  "main": "./build/electron/main.js",
+  "scripts": {
+    "dump": "dump-stlite-desktop-artifacts",
+    "serve": "cross-env NODE_ENV=production electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "files": ["build/**/*"],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win" : {
+      "icon" : "./GraphXplore/graphxplore_icon.png"
+    }
+  },
+  "devDependencies": {
+    "@stlite/desktop": "0.46.1",
+    "cross-env": "^7.0.3",
+    "electron": "^28.2.1",
+    "electron-builder": "^24.9.1"
+  },
+  "stlite": {
+    "desktop": {
+      "embed": true
+    }
+  }
+}

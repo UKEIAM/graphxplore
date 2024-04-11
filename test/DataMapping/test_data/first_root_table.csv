@@ -1,0 +1,4 @@
+PK_ROOT_1,ATTR1,ATTR2,PK_CHILD_1,PK_CHILD_2
+0,"SomeText",42,0,0
+1,"SomeText",17,1,1
+2,"AnotherText",13,0,1

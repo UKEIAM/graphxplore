@@ -1,0 +1,84 @@
+{
+      "root_target_table": {
+            "table_mapping": {
+                  "type": "OneToOne",
+                  "source_tables": [
+                        "first_root_table"
+                  ],
+                  "to_inherit": null,
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "PKT_CHILD1": {
+                        "target_table": "root_target_table",
+                        "target_variable": "PKT_CHILD1",
+                        "cases": [
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "COPY VARIABLE PK_CHILD_1 IN TABLE first_child_table IF TYPE IS Integer"
+                              }
+                        ]
+                  },
+                  "CopyStrAttr": {
+                        "target_table": "root_target_table",
+                        "target_variable": "CopyStrAttr",
+                        "cases": [
+                              {
+                                    "if": "(VARIABLE ATTR OF TYPE String IN TABLE second_child_table IS \"\")",
+                                    "then": "RETURN wasMissing OF TYPE String"
+                              },
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "COPY VARIABLE ATTR1 IN TABLE first_root_table IF TYPE IS String"
+                              }
+                        ]
+                  }
+            }
+      },
+      "first_child_target_table": {
+            "table_mapping": {
+                  "type": "OneToOne",
+                  "source_tables": [
+                        "first_child_table"
+                  ],
+                  "to_inherit": null,
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "FLOAT_ATTR": {
+                        "target_table": "first_child_target_table",
+                        "target_variable": "FLOAT_ATTR",
+                        "cases": [
+                              {
+                                    "if": "((NOT (VARIABLE ATTR OF TYPE Integer IN TABLE third_child_table IN [Na])) AND (VARIABLE ATTR OF TYPE Integer IN TABLE third_child_table < 100))",
+                                    "then": "RETURN -42.0 OF TYPE Decimal"
+                              }
+                        ]
+                  }
+            }
+      },
+      "second_child_target_table": {
+            "table_mapping": {
+                  "type": "Inherited",
+                  "source_tables": [],
+                  "to_inherit": "root_target_table",
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "INT_ATTR": {
+                        "target_table": "second_child_target_table",
+                        "target_variable": "INT_ATTR",
+                        "cases": [
+                              {
+                                    "if": "((VARIABLE ATTR2 OF TYPE Integer IN TABLE first_root_table >= 20) OR (VARIABLE ATTR1 OF TYPE String IN TABLE first_root_table CONTAINS \"Some\"))",
+                                    "then": "COPY VARIABLE ATTR2 IN TABLE first_root_table IF TYPE IS Integer"
+                              },
+                              {
+                                    "if": "(NOT (VARIABLE ATTR OF TYPE String IN TABLE second_child_table IS \"\"))",
+                                    "then": "RETURN 42 OF TYPE Integer"
+                              }
+                        ]
+                  }
+            }
+      }
+}

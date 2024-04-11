@@ -1,0 +1,87 @@
+{
+      "root": {
+            "table_mapping": {
+                  "type": "Concatenate",
+                  "source_tables": [
+                        "first_root_table",
+                        "second_root_table"
+                  ],
+                  "to_inherit": null,
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "ORIGIN_PK_1": {
+                        "target_table": "root",
+                        "target_variable": "ORIGIN_PK_1",
+                        "cases": [
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "COPY VARIABLE PK_ROOT_1 IN TABLE first_root_table IF TYPE IS Integer"
+                              }
+                        ]
+                  },
+                  "ORIGIN_PK_2": {
+                        "target_table": "root",
+                        "target_variable": "ORIGIN_PK_2",
+                        "cases": [
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "COPY VARIABLE PK_ROOT_1 IN TABLE second_root_table IF TYPE IS Integer"
+                              }
+                        ]
+                  },
+                  "ATTR1": {
+                        "target_table": "root",
+                        "target_variable": "ATTR1",
+                        "cases": [
+                              {
+                                    "if": "(VARIABLE ATTR OF TYPE String IN TABLE second_child_table IS \"notMissing\")",
+                                    "then": "RETURN firstCase OF TYPE String"
+                              },
+                              {
+                                    "if": "(VARIABLE ATTR1 OF TYPE String IN TABLE first_root_table CONTAINS \"Some\")",
+                                    "then": "RETURN secondCase OF TYPE String"
+                              }
+                        ]
+                  },
+                  "ATTR2": {
+                        "target_table": "root",
+                        "target_variable": "ATTR2",
+                        "cases": [
+                              {
+                                    "if": "(VARIABLE ATTR OF TYPE Decimal IN TABLE second_root_table < 0)",
+                                    "then": "COPY VARIABLE ATTR IN TABLE second_root_table IF TYPE IS Decimal"
+                              },
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "RETURN -999.0 OF TYPE Decimal"
+                              }
+                        ]
+                  }
+            }
+      },
+      "child": {
+            "table_mapping": {
+                  "type": "Inherited",
+                  "source_tables": [],
+                  "to_inherit": "root",
+                  "condition": "(TRUE)"
+            },
+            "variable_mappings": {
+                  "ATTR": {
+                        "target_table": "child",
+                        "target_variable": "ATTR",
+                        "cases": [
+                              {
+                                    "if": "(VARIABLE ATTR OF TYPE Decimal IN TABLE second_root_table >= -3.0)",
+                                    "then": "RETURN valid OF TYPE String"
+                              },
+                              {
+                                    "if": "(TRUE)",
+                                    "then": "RETURN invalid OF TYPE String"
+                              }
+                        ]
+                  }
+            }
+      }
+}
