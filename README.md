@@ -18,7 +18,7 @@ generally used with any data source.
 - Python package: Install from PyPi with `pip install graphxplore`, or checkout versions at (:hammer: TODO: insert pypi link)
   - Alternatively, you can clone this repository, checkout a specific commit and use that version via `sys.path`,
     `pip install -e` or `conda develop`
-- Desktop app: Download the installer for a specific release from (:hammer: TODO: insert release link)
+- Desktop app: Download the installer for a specific release from ( :hammer: TODO: insert release link)
   - Alternatively, you can clone this repository, checkout a specific commit, use [NPM](https://www.npmjs.com/) and run 
     the [installation script](./frontend/build_release.sh)
 - Local webserver: Clone this repository, install streamlit with `pip install streamlit`, navigate to 
