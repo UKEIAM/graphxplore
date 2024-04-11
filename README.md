@@ -30,4 +30,4 @@ You can find detailed information about the data-related tasks that you can work
 functionalities at (:hammer: insert GitHub pages link). Additionally, the same information is given in the app via various 
 how-to pages and tooltips.
 
-To read the Python package code documentation navigate to (:hammer: insert readthedocs link)
+To read the Python package code documentation navigate to ( :smile: insert readthedocs link)
