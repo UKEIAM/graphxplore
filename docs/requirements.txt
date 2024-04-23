@@ -1,4 +1,5 @@
 sphinx
 sphinx-rtd-theme
+chardet
 plotly
 neo4j
