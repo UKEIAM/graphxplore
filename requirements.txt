@@ -2,8 +2,6 @@ numpy
 neo4j
 pytest
 chardet
-sphinx
-sphinx-rtd-theme
 streamlit
 plotly
 pandas

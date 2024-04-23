@@ -15,7 +15,6 @@ build:
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
-
   configuration: docs/source/conf.py
   fail_on_warning: true
 
@@ -24,3 +23,7 @@ sphinx:
 # formats:
 #   - pdf
 #   - epub
+
+python:
+  install:
+    - requirements: docs/requirements.txt
