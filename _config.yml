@@ -12,6 +12,12 @@ remote_theme: just-the-docs/just-the-docs@v0.8.1
 #theme: minima
 #remote_theme: pages-themes/midnight@v0.2.0
 #remote_theme: pages-themes/slate@v0.2.0
+markdown: kramdown
+callouts:
+  note:
+    title: Note
+    color: purple
+
 plugins:
   # - jekyll-feed
   - jekyll-remote-theme
