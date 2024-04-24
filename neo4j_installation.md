@@ -8,7 +8,7 @@ nav_order: 4
 {: .no_toc }
 
 GraphXplore is based on the Neo4J graph-based data platform. Here, you can read information on how 
-to install the Neo4J and configure it for the usage with GraphXplore.
+to install Neo4J and configure it for the usage with GraphXplore.
 
 ## Table of contents
 {: .no_toc .text-delta } 
@@ -57,3 +57,38 @@ This section is only relevant, if you already created an attribute association g
 
 We recommend visually exploring AAGs in [Neo4J Bloom](https://neo4j.com/product/bloom/). When you use Neo4J Bloom for a 
 new AAG, you need to add configurations for the visualization.
+Before installation make sure that:
+- Neo4J Desktop and the DBMS containing the AAG are running
+- You have the config file ready, if not [get it here](https://github.com/UKEIAM/graphxplore/blob/master/frontend/GraphXplore/bloom_config.json)
+
+In Neo4J Desktop/Bloom:
+1. Click on the dropdown next to the blue "Open" button on the top right of the window, and 
+   click on "Neo4J Bloom"
+2. After Neo4J Bloom opens, click on the control icon in the upper left corner of the windows 
+   and then on the button with "... Untitled Perspective..."
+3. Select the database containing your AAG from the drop-down
+4. Click on "Import" and select the GraphXplore config file
+5. Click on the white card "GraphXplore AAG Config", an empty scene will open where you can 
+   explore your AAG!
+
+<figure>
+  <img src="./how_to_images/bloom_aag_config.png" alt="drawing">
+  <figcaption style="font-style: italic;">Steps to configure Neo4J Bloom</figcaption>
+</figure>
+
+### Neo4J Browser Configuration
+
+If you are an advanced user and you want to query AAGs in the Neo4J Browser, you can add visualization styling to adapt 
+the Neo4J Browser looks to that of your AAGs in Bloom. Follow these steps:
+
+- Have Neo4J Desktop (or a Docker container) accessible and the DBMS containing the AAG running
+- Have the styling file ready, or [get it here](https://github.com/UKEIAM/graphxplore/blob/master/frontend/GraphXplore/browser_style.grass)
+- Open Neo4J Browser by clicking on the blue "Open" button on Neo4J Desktop, or access the 
+  Docker container Neo4J Browser
+- Type `:style` in the Neo4J Browser query command line
+ - Drag and drop the styling file, you are ready to go!
+
+<figure>
+  <img src="./how_to_images/browser_aag_style.png" alt="drawing">
+  <figcaption style="font-style: italic;">Styling in Neo4J Desktop</figcaption>
+</figure>
