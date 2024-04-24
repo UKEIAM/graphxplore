@@ -23,7 +23,8 @@ The tool can be used as a standalone desktop tool with graphical user interface,
  - Desktop tool: Releases can be accessed [here](https://github.com/UKEIAM/graphxplore/releases)
  - Local webserver: Clone the [GraphXplore repository](https://github.com/UKEIAM/graphxplore), install streamlit with `pip install streamlit`, navigate to 
   `frontend/GraphXplore` and run `streamlit run streamlit_app.py`
- - Python package: Install from PyPi with `pip install graphxplore`, or checkout [available versions](https://pypi.org/project/graphxplore/)
+ - Python package: Install from PyPi with `pip install graphxplore`, or checkout 
+   [available versions](https://pypi.org/project/graphxplore/). Take a look at the [package documentation](https://graphxplore.readthedocs.io/en/latest/)
 
 For data exploration, GraphXplore uses [Neo4J database management system](https://neo4j.com/) for storage and 
 graph-based visualization. A guide how to install it can be found [here](/neo4j_installation).
