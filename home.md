@@ -1,10 +1,13 @@
 ---
-layout: home
-title: "Welcome to GraphXplore!"
+title: Welcome to GraphXplore!
+author: Louis Bellmann
 permalink: /
+nav_order: 1
 ---
 
 <img src="./graphxplore_icon.png" alt="drawing" width="100"/>
+
+# Welcome to GraphXplore!
 
 ## About
 
