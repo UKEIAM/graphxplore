@@ -15,10 +15,11 @@ generally used with any data source.
 
 ## Installation
 
-- Python package: Install from PyPi with `pip install graphxplore`, or checkout versions at ( :hammer: TODO insert pypi link)
+- Python package: Install from PyPi with `pip install graphxplore`, or checkout versions at the 
+  [PyPI GraphXplore project site](https://pypi.org/project/graphxplore/)
   - Alternatively, you can clone this repository, checkout a specific commit and use that version via `sys.path`,
     `pip install -e` or `conda develop`
-- Desktop app: Download the installer for a specific release from ( :hammer: TODO insert release link)
+- Desktop app: [Download the installer](https://github.com/UKEIAM/graphxplore/releases)
   - Alternatively, you can clone this repository, checkout a specific commit, use [NPM](https://www.npmjs.com/) and run 
     the [installation script](./frontend/build_release.sh)
 - Local webserver: Clone this repository, install streamlit with `pip install streamlit`, navigate to 
@@ -26,8 +27,8 @@ generally used with any data source.
 
 ## Documentation
 
-You can find detailed information about the data-related tasks that you can work in with GraphXplore, as well as its 
-functionalities at ( :hammer: TODO insert GitHub pages link). Additionally, the same information is given in the app via various 
-how-to pages and tooltips.
+In the [GraphXplore user guide](https://ukeiam.github.io/graphxplore/) you can find detailed information about the 
+data-related tasks that you can work in with GraphXplore, as well as its functionalities. Additionally, the same 
+information is given in the app via various how-to pages and tooltips.
 
-To read the Python package code documentation navigate to ( :hammer: TODO insert readthedocs link)
+Additionally, consider reading the [GraphXplore Python package code documentation](https://graphxplore.readthedocs.io/en/latest/)
