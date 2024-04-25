@@ -15,7 +15,7 @@ GraphXplore is a tool for visually exploring, cleaning and transforming your dat
 metadata and mappings with others. It can be used without prior coding/scripting skills and does not require 
 advanced knowledge about statistics or data science. The tool was designed with the application to the medical 
 research domain in mind, but can be generally used with any data source. An overview of GraphXplore functionalities can 
-be found [here](/functionalities).
+be found [here]({{ site.baseurl }}{% link functionalities.md %}).
 
 ## Installation
 
@@ -27,4 +27,5 @@ The tool can be used as a standalone desktop tool with graphical user interface,
    [available versions](https://pypi.org/project/graphxplore/). Take a look at the [package documentation](https://graphxplore.readthedocs.io/en/latest/)
 
 For data exploration, GraphXplore uses [Neo4J database management system](https://neo4j.com/) for storage and 
-graph-based visualization. A guide how to install it can be found [here](/neo4j_installation).
+graph-based visualization. A guide how to install it can be found 
+[here]({{ site.baseurl }}{% link neo4j_installation.md %}#installation).

@@ -69,9 +69,10 @@ the graph visualization.
 ## How to explore AAGs?
 
 Here, We will talk about how to *interpret* the AAG visualization and how it can help you during 
-your data exploration. If you want to know you to operate Neo4J, check out [here](/aag_intro/bloom_navigation). 
-You can learn more about [nodes]({% link aag_intro/aag_nodes.md %}) and 
-[edges]({% link aag_intro/aag_edges.md %}) in detail in their respective subpages.
+your data exploration. If you want to know you to operate Neo4J, check out 
+[here]({{ site.baseurl }}{% link aag_intro/bloom_navigation.md %}). 
+You can learn more about [nodes]({{ site.baseurl }}{% link aag_intro/aag_nodes.md %}) and 
+[edges]({{ site.baseurl }}{% link aag_intro/aag_edges.md %}) in detail in their respective subpages.
 
 <figure>
   <img src="../how_to_images/aag_overview.png" alt="drawing">
@@ -106,5 +107,6 @@ interesting to explore. You can double-click on the nodes and edges to inspect t
 Regarding the blue node, it might be interesting to find out why it has no edge (i.e. no measured 
 conditional dependency) although it is statistically related to the negative group. To summarize,
 you might want to explore visual clusters, strongly colored nodes, absence of edges, and of course 
-the statistical parameter which are explained in detail in the subpages for [nodes]({% link aag_intro/aag_nodes.md %}) 
-and [edges]({% link aag_intro/aag_edges.md %}).
+the statistical parameter which are explained in detail in the subpages for 
+[nodes]({{ site.baseurl }}{% link aag_intro/aag_nodes.md %}) 
+and [edges]({{ site.baseurl }}{% link aag_intro/aag_edges.md %}).

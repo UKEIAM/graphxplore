@@ -9,7 +9,7 @@ parent: Attribute Association Graphs
 {: .no_toc }
 
 {: .note }
-If you not yet configured Neo4J Bloom, check out [here](/neo4j_installation#configure-attribute-association-graph-visualization)
+If you not yet configured Neo4J Bloom, check out [here]({{ site.baseurl }}{% link neo4j_installation.md %}#configure-attribute-association-graph-visualization)
 
 If you used Neo4J Bloom before, you will most likely be familiar with most of the functionalities 
 described here. Notice that Neo4J Bloom was developed independently of GraphXplore, and we only 
@@ -33,10 +33,10 @@ corner. Here, you can display the whole graph or parts of it in three different 
 - Type or click on "Show whole graph" to display the whole AAG. You can dismiss parts of the graph 
   from the visualization later on
 - Type or click on "Show subgraph of label " followed by a table or variable label assigned during 
-  metadata annotation. All available labels will be displayed for auto-completion. Press <Tab> to 
+  metadata annotation. All available labels will be displayed for auto-completion. Press `Tab` to 
   finish the statement. All attribute nodes with this label and their connecting edges will be 
   added to the visualization
-- Type or click on "Show subgraph with name containing " followed by a string. Press <Tab> to 
+- Type or click on "Show subgraph with name containing " followed by a string. Press `Tab` to 
   finish the statement. All attribute nodes with the string contained in their variable name 
   together with their connecting edges will be added to the visualization
 
@@ -53,7 +53,8 @@ multiple nodes, you do so with pressing `Ctrl` while left-clicking. You can dism
 nodes from the visualization by right-click and "Dismiss".  
 You can inspect the data of a node by either double-clicking on it, or right-clicking and then choosing "Inspect". A 
 window opens displaying all node labels and parameters. The labels are given in the upper part and the parameters in 
-the lower part. [Here](/aag_intro/aag_nodes) you read more about the parameter and label meanings.
+the lower part. [Here]({{ site.baseurl }}{% link aag_intro/aag_nodes.md %}) you read more about the parameter and label 
+meanings.
 
 <figure>
   <img src="../how_to_images/navigation_2.png" alt="drawing">
@@ -80,11 +81,11 @@ select them via left-click or select multiple edges with `Ctrl` and left-click. 
 multiple edges from the visualization by right-click and "Dismiss".  
 You can inspect the data of the edge by double-clicking or right-click and "Inspect", a new window 
 opens. The edge type is displayed on top of the window. In the middle, the edge parameters are 
-shown. Explanation of edge type and parameters can be accessed [here](/aag_intro/aag_edges). In the lower part of 
-the window, the source and target node data are displayed and can 
-be expanded.
+shown. Explanation of edge type and parameters can be accessed 
+[here]({{ site.baseurl }}{% link aag_intro/aag_edges.md %}). In the lower part of the window, the source and target 
+node data are displayed and can be expanded.
 
 <figure>
-  <img src="../how_to_images/navigation_3.png" alt="drawing">
+  <img src="../how_to_images/navigation_4.png" alt="drawing">
   <figcaption style="font-style: italic;">Edge parameter view</figcaption>
 </figure>

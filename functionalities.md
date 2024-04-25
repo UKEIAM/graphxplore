@@ -65,12 +65,13 @@ your dataset and formulated a hypothesis.
 The data exploration in GraphXplore relies heavily on visualization and robust, simple statistical metrics. 
 This way, you don't need advanced statistical knowledge to interpret the results and assess their 
 applicability. Initially, your dataset is stored in a [Neo4J graph database](https://neo4j.com/) 
-(read [here](/neo4j_installation) in the installation)for efficient retrieval during the data exploration. Afterwards, 
-you have two ways of exploring your dataset which you can use independently or in conjunction:
+(read [here]({{ site.baseurl }}{% link neo4j_installation.md %}) for the installation) for efficient retrieval during the data 
+exploration. Afterwards, you have two ways of exploring your dataset which you can use independently or in conjunction:
 
 - A classic *dashboard* approach where variable distributions and joint distributions of variable pairs are 
   visualized as pie or bar charts, and scatter or box plots.
-- A novel statistical analysis representation called [attribute association graph](/aag_intro). This graph captures several 
+- A novel statistical analysis representation called 
+- [attribute association graph]({{ site.baseurl }}{% link aag_intro.md %}). This graph captures several 
   statistical parameters of single variable values and their conditional dependencies, and visualizes them 
   using colors, shapes and arrows. Alternatively, the statistical parameters can be retrieved in tabular form.
   
