@@ -11,6 +11,9 @@ has_children: true
 Here, we explain this novel type of data exploration. Some concepts might be quite different from other statistical 
 tools you worked with. Feel free to come back to this tutorial any time during your workflow.
 
+{: .note }
+If you created an attribute association graph, but not yet configured Neo4J Bloom, check out [here]({{ site.baseurl }}{% link neo4j_installation.md %}#configure-attribute-association-graph-visualization)
+
 ## Table of contents
 {: .no_toc .text-delta } 
 - TOC
