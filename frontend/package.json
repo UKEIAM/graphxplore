@@ -1,6 +1,6 @@
 {
   "name": "GraphXplore",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": "Louis Bellmann",
   "description": "A tool for meta data extraction, data cleaning, visual exploration using graphs and dashboards",
   "main": "./build/electron/main.js",
