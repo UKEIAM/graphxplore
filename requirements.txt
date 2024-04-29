@@ -1,4 +1,3 @@
-numpy
 neo4j
 pytest
 chardet
