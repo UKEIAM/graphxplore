@@ -2,7 +2,7 @@
 
 [![unittest workflow](https://github.com/UKEIAM/graphxplore/actions/workflows/unittest.yml/badge.svg)](https://github.com/UKEIAM/graphxplore/actions/workflows/unittest.yml)
 
-<img src="./frontend/GraphXplore/graphxplore_icon.png" alt="drawing" width="100"/>
+<img src="https://github.com/UKEIAM/graphxplore/blob/master/frontend/GraphXplore/graphxplore_icon.png" alt="drawing" width="100"/>
 
 ## About
 
