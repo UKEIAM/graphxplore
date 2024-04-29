@@ -1,6 +1,7 @@
 # GraphXplore: Visual exploration and easy preprocessing of data
 
 [![unittest workflow](https://github.com/UKEIAM/graphxplore/actions/workflows/unittest.yml/badge.svg)](https://github.com/UKEIAM/graphxplore/actions/workflows/unittest.yml)
+[![Documentation Status](https://readthedocs.org/projects/graphxplore/badge/?version=latest)](https://graphxplore.readthedocs.io/en/latest/?badge=latest)
 
 <img src="https://ukeiam.github.io/graphxplore/graphxplore_icon.png" alt="drawing" width="100"/>
 
@@ -31,4 +32,4 @@ In the [GraphXplore user guide](https://ukeiam.github.io/graphxplore/) you can f
 data-related tasks that you can work in with GraphXplore, as well as its functionalities. Additionally, the same 
 information is given in the app via various how-to pages and tooltips.
 
-Additionally, consider reading the [GraphXplore Python package code documentation](https://graphxplore.readthedocs.io/en/latest/)
+For information on coding with GraphXplore, read the [Python package code documentation](https://graphxplore.readthedocs.io/en/latest/).

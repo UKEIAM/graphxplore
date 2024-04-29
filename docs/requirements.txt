@@ -1,0 +1,6 @@
+sphinx
+sphinx-rtd-theme
+chardet
+pandas
+plotly
+neo4j
