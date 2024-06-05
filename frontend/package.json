@@ -1,8 +1,9 @@
 {
   "name": "GraphXplore",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": "Louis Bellmann",
   "description": "A tool for meta data extraction, data cleaning, visual exploration using graphs and dashboards",
+  "license": "MIT",
   "main": "./build/electron/main.js",
   "scripts": {
     "dump": "dump-stlite-desktop-artifacts",
@@ -17,6 +18,9 @@
       "buildResources": "assets"
     },
     "win" : {
+      "icon" : "./GraphXplore/graphxplore_icon.png"
+    },
+    "linux" : {
       "icon" : "./GraphXplore/graphxplore_icon.png"
     }
   },
