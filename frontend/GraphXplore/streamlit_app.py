@@ -1,6 +1,4 @@
 import streamlit as st
-from st_pages import Page, show_pages
-import os
 from src.utils import ICON_PATH, get_how_to_image_path
 from src.workflow_widgets import Workflow
 

@@ -511,11 +511,12 @@ if __name__ == '__main__':
                 target_pk_table = target_name_col.text_input('Insert name of result CSV table', table_name)
                 result_data = VariableHandle(ADD_PK_RESULT_DATA_KEY, init={}).get_attr()
 
-                def add_pk():
-                    result_data.clear()
-                    DataMappingUtils.add_primary_key(source_data, table_name,
-                                                     result_data, target_pk_table, pk_name, start_idx)
-                st.button('Generate new table', type='primary', on_click=add_pk)
+                def add_pk(data_source, data_result, data_table, pk_to_add, pk_start_idx):
+                    data_result.clear()
+                    DataMappingUtils.add_primary_key(
+                        data_source, data_table, data_result, target_pk_table, pk_to_add, pk_start_idx)
+                st.button('Generate new table', type='primary', on_click=add_pk,
+                          args=[source_data, result_data, table_name, pk_name, start_idx])
 
                 if len(result_data) > 0:
                     pk_add_data_downloader = CSVDownloader(ADD_PK_RESULT_DATA_KEY, 'Store generated table',

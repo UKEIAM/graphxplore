@@ -154,9 +154,11 @@ def test_queries(neo4j_config):
             'first_group': {42: 1}}
 
         data = builder._query_and_transform_dist_data(first_child_var_info)
-        assert data == {
-            'first_child_int' : [13, 13, 13],
-            'group' : ['All of table "root" (2)', 'first_group (1)', 'All of table "root" (2)']}
+        data_to_rows = sorted(
+            [sorted([(key, val_list[idx]) for key, val_list in data.items()]) for idx in range(len(data['group']))])
+        assert data_to_rows == [[('first_child_int', 13), ('group', 'All of table "root" (2)')],
+                                [('first_child_int', 13), ('group', 'All of table "root" (2)')],
+                                [('first_child_int', 13), ('group', 'first_group (1)')]]
 
         data = builder._query_and_transform_dist_data((root_var_info, child_child_var_info))
         assert data == {
@@ -169,33 +171,32 @@ def test_queries(neo4j_config):
             'second': {'All of table "root"': {42: 1}, 'first_group': {42: 0}}}
 
         data = builder._query_and_transform_dist_data((child_child_var_info, second_child_var_info))
-        assert data == {
-            'child_child_int': [42, 42, 42],
-            'group': ['All of table "root" (2)',
-                      'first_group (1)',
-                      'All of table "root" (2)'],
-            'second_child_decimal': [7.5, 7.5, 7.5]}
+        data_to_rows = sorted(
+            [sorted([(key, val_list[idx]) for key, val_list in data.items()]) for idx in range(len(data['group']))])
+        assert data_to_rows == [
+            [('child_child_int', 42), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+            [('child_child_int', 42), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+            [('child_child_int', 42), ('group', 'first_group (1)'), ('second_child_decimal', 7.5)]]
 
         data = builder._query_and_transform_dist_data((second_child_var_info, child_child_var_info))
-        assert data == {
-            'child_child_int': [42, 42, 42],
-            'group': ['All of table "root" (2)',
-                      'first_group (1)',
-                      'All of table "root" (2)'],
-            'second_child_decimal': [7.5, 7.5, 7.5]}
+        data_to_rows = sorted(
+            [sorted([(key, val_list[idx]) for key, val_list in data.items()]) for idx in range(len(data['group']))])
+        assert data_to_rows == [[('child_child_int', 42), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+                                [('child_child_int', 42), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+                                [('child_child_int', 42), ('group', 'first_group (1)'), ('second_child_decimal', 7.5)]]
 
         data = builder._query_and_transform_dist_data((second_child_var_info, first_child_var_info))
-        assert data == {
-            'first_child_int': [13, 13, 13],
-            'group': ['All of table "root" (2)',
-                      'first_group (1)',
-                      'All of table "root" (2)'],
-            'second_child_decimal': [7.5, 7.5, 7.5]}
+        data_to_rows = sorted(
+            [sorted([(key, val_list[idx]) for key, val_list in data.items()]) for idx in range(len(data['group']))])
+        assert data_to_rows == [
+            [('first_child_int', 13), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+            [('first_child_int', 13), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+            [('first_child_int', 13), ('group', 'first_group (1)'), ('second_child_decimal', 7.5)]]
 
         data = builder._query_and_transform_dist_data((first_child_var_info, second_child_var_info))
-        assert data == {
-            'first_child_int': [13, 13, 13],
-            'group': ['All of table "root" (2)',
-                      'first_group (1)',
-                      'All of table "root" (2)'],
-            'second_child_decimal': [7.5, 7.5, 7.5]}
+        data_to_rows = sorted(
+            [sorted([(key, val_list[idx]) for key, val_list in data.items()]) for idx in range(len(data['group']))])
+        assert data_to_rows == [
+            [('first_child_int', 13), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+            [('first_child_int', 13), ('group', 'All of table "root" (2)'), ('second_child_decimal', 7.5)],
+            [('first_child_int', 13), ('group', 'first_group (1)'), ('second_child_decimal', 7.5)]]
