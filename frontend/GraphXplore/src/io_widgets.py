@@ -1,6 +1,5 @@
 import csv
 import io
-
 import streamlit as st
 from io import StringIO, BytesIO
 import zipfile
@@ -55,7 +54,7 @@ class CSVUploader:
                                 reader = csv.DictReader(str_file, dialect=dialect)
                             except csv.Error:
                                 str_file.seek(0)
-                                reader = csv.DictReader(file)
+                                reader = csv.DictReader(str_file)
                         else:
                             reader = csv.DictReader(str_file, delimiter=delimiter)
                         loaded_data[table_name] = [line for line in reader]
@@ -94,7 +93,6 @@ class CSVDownloader:
         self.key = key
 
     @staticmethod
-    #@st.cache_data
     def _create_zip(_parent_obj, data_to_zip: Dict[str, List[Dict[str, str]]], encoding: str, delimiter: str):
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, mode='a') as zip_file:
@@ -106,7 +104,6 @@ class CSVDownloader:
         return zip_buffer.getvalue()
 
     @staticmethod
-    #@st.cache_data
     def _create_csv(_parent_obj, data_to_zip: List[Dict[str, str]], encoding: str, delimiter: str):
         csv_buffer = io.StringIO()
         writer = csv.DictWriter(csv_buffer, fieldnames=data_to_zip[0].keys(), delimiter=delimiter)
