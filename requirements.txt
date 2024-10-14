@@ -1,6 +1,6 @@
-neo4j
-pytest
-chardet
-streamlit
-plotly
-pandas
+neo4j==5.25.0
+pytest==8.3.3
+chardet==5.2.0
+streamlit==1.39.0
+plotly==5.24.1
+pandas==2.2.3

@@ -1,6 +1,6 @@
 {
   "name": "GraphXplore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Louis Bellmann",
   "description": "A tool for meta data extraction, data cleaning, visual exploration using graphs and dashboards",
   "license": "MIT",
@@ -27,10 +27,10 @@
     }
   },
   "devDependencies": {
-    "@stlite/desktop": "0.46.1",
+    "@stlite/desktop": "0.63.1",
     "cross-env": "^7.0.3",
-    "electron": "^28.2.1",
-    "electron-builder": "^24.9.1"
+    "electron": "^30.0.8",
+    "electron-builder": "^24.13.3"
   },
   "stlite": {
     "desktop": {

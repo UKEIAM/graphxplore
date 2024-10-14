@@ -23,7 +23,7 @@ generally used with any data source.
 - Desktop app: [Download the installer](https://github.com/UKEIAM/graphxplore/releases)
   - Alternatively, you can clone this repository, checkout a specific commit, use [NPM](https://www.npmjs.com/) and run 
     the [installation script](./frontend/build_release.sh)
-- Local webserver: Clone this repository, install streamlit with `pip install streamlit`, navigate to 
+- Local webserver: Clone this repository, install streamlit with `pip install streamlit==1.39.0`, navigate to 
   `frontend/GraphXplore` and run `streamlit run streamlit_app.py`
 
 ## Documentation
